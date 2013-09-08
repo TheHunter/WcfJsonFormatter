@@ -1,0 +1,3 @@
+Release notes:
+
+New methods for setting properties values from IPersistentClassInfo objects.
