@@ -6,22 +6,35 @@ using System.Text;
 
 namespace WcfJsonFormatter.Configuration
 {
-    public class ServiceTypeCollection
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TElement"></typeparam>
+    public class ServiceTypeCollection<TElement>
         : ConfigurationElementCollection
+        where TElement : ConfigServiceElement, new()
     {
-
-        public void Add(ServiceType custom)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="custom"></param>
+        public void Add(TElement custom)
         {
             BaseAdd(custom);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="element"></param>
         protected override void BaseAdd(ConfigurationElement element)
         {
             BaseAdd(element, false);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public override ConfigurationElementCollectionType CollectionType
         {
             get
@@ -30,24 +43,35 @@ namespace WcfJsonFormatter.Configuration
             }
         }
 
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         protected override ConfigurationElement CreateNewElement()
         {
-            return new ServiceType();
+            return new TElement();
         }
 
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((ServiceType)element).Name;
+            return ((TElement)element).Key;
         }
 
-
-        public ServiceType this[int Index]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Index"></param>
+        /// <returns></returns>
+        public TElement this[int Index]
         {
             get
             {
-                return (ServiceType)BaseGet(Index);
+                return (TElement)BaseGet(Index);
             }
             set
             {
@@ -59,41 +83,60 @@ namespace WcfJsonFormatter.Configuration
             }
         }
 
-
-        new public ServiceType this[string Name]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <returns></returns>
+        new public TElement this[string Name]
         {
             get
             {
-                return (ServiceType)BaseGet(Name);
+                return (TElement)BaseGet(Name);
             }
         }
 
-
-        public int indexof(ServiceType element)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public int indexof(TElement element)
         {
             return BaseIndexOf(element);
         }
 
-
-        public void Remove(ServiceType url)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="url"></param>
+        public void Remove(TElement url)
         {
             if (BaseIndexOf(url) >= 0)
-                BaseRemove(url.Name);
+                BaseRemove(url.Key);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
         public void RemoveAt(int index)
         {
             BaseRemoveAt(index);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
         public void Remove(string name)
         {
             BaseRemove(name);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void Clear()
         {
             BaseClear();

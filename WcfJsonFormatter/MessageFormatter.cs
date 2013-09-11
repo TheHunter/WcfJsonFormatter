@@ -50,16 +50,16 @@ namespace WcfJsonFormatter
                 );
             this.operationResult = new OperationResult(returnType);
 
-            this.operationParameters.All
-                (
-                    info =>
-                    {
-                        DynamicTypeRegister.LoadTypes(info.OrginalType.Assembly);
-                        return true;
-                    }
-                );
+            //this.operationParameters.All
+            //    (
+            //        info =>
+            //        {
+            //            DynamicTypeRegister.LoadTypes(info.OrginalType.Assembly);
+            //            return true;
+            //        }
+            //    );
 
-            DynamicTypeRegister.LoadTypes(this.operationResult.OrginalType.Assembly);
+            //DynamicTypeRegister.LoadTypes(this.operationResult.OrginalType.Assembly);
         }
 
         /// <summary>

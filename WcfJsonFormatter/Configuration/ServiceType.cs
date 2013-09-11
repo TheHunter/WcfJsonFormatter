@@ -10,9 +10,8 @@ namespace WcfJsonFormatter.Configuration
     /// 
     /// </summary>
     public class ServiceType
-        : ConfigurationElement
+        : ConfigServiceElement
     {
-        
         [ConfigurationProperty("name", IsRequired = true)]
         public string Name
         {
@@ -26,5 +25,11 @@ namespace WcfJsonFormatter.Configuration
             get { return (string)this["assembly"]; }
             set { this["assembly"] = value; }
         }
+
+
+        public override object Key
+        {
+            get { return this.Name; }
+        }
     }
 }

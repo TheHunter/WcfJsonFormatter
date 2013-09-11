@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using System.ServiceModel.Channels;
 using System.Text;
 using WcfJsonFormatter.Configuration;
 
@@ -40,13 +41,42 @@ namespace WcfJsonFormatter
         /// <returns></returns>
         public static Type NormalizeType(Type arg)
         {
-            if (!arg.IsAbstract && !arg.IsInterface)
+            #region OLD CODE
+            //if (!arg.IsAbstract && !arg.IsInterface) 
+            //    return arg;
+
+            //var t0 = Converters.FirstOrDefault(n => n.Key.Name == arg.Name);
+            //if (t0.Value != null)
+            //{
+            //    if (!t0.Value.IsGenericType) return t0.Value;
+
+            //    return t0.Value.MakeGenericType(arg.GetGenericArguments());
+            //}
+
+            //// non generico
+            //if (!arg.IsGenericType)
+            //    return Converters.Values.FirstOrDefault(arg.IsAssignableFrom);
+
+            //return Converters.Values.Select(current => current.MakeGenericType(arg.GetGenericArguments()))
+            //                        .FirstOrDefault(arg.IsAssignableFrom);
+            #endregion
+
+            //ICollection<>
+            //BindingElementCollection cl1 = new BindingElementCollection();
+            //Collection<BindingElement> cl2 = new Collection<BindingElement>();
+            //cl2 = cl1;
+
+            //EntryCollection a;
+
+            if (arg.IsPrimitive || (!arg.IsAbstract && !arg.IsInterface))
                 return arg;
 
-            var t0 = Converters.FirstOrDefault(n => n.Key.Name == arg.Name);
+            KeyValuePair<Type, Type> t0 = Converters.FirstOrDefault(n => n.Key.Name == arg.Name);
+
             if (t0.Value != null)
             {
-                if (!t0.Value.IsGenericType) return t0.Value;
+                if (!t0.Value.IsGenericType)
+                    return t0.Value;
 
                 return t0.Value.MakeGenericType(arg.GetGenericArguments());
             }
@@ -55,8 +85,44 @@ namespace WcfJsonFormatter
             if (!arg.IsGenericType)
                 return Converters.Values.FirstOrDefault(arg.IsAssignableFrom);
 
-            return Converters.Values.Select(current => current.MakeGenericType(arg.GetGenericArguments()))
-                                    .FirstOrDefault(arg.IsAssignableFrom);
+            Type[] genericArgs = arg.GetGenericArguments();
+            //return Converters.Values.Select(current => current.MakeGenericType(genericArgs))
+            //                        .FirstOrDefault(arg.IsAssignableFrom);
+
+            Type supplier = null;
+            // tutti i VALORI del dizionario devono essere oggetti di classe concreta..
+            Converters.Values.All
+                (
+                    type =>
+                        {
+                            try
+                            {
+                                supplier = null;
+
+                                if (arg.IsAssignableFrom(type))
+                                {
+                                    supplier = type;
+                                    return false;
+                                }
+
+                                if (type.IsGenericType)
+                                {
+                                    supplier = type.MakeGenericType(genericArgs);
+
+                                    if (arg.IsAssignableFrom(supplier))
+                                        return false;
+                                }
+                            }
+                            catch (Exception)
+                            {
+
+                            }
+
+                            return true;
+                        }
+                );
+
+            return supplier;
         }
 
         /// <summary>
