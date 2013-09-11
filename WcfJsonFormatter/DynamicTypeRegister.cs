@@ -59,19 +59,25 @@ namespace WcfJsonFormatter
                                     .FirstOrDefault(arg.IsAssignableFrom);
         }
 
-        public static void LoadType(ServiceType serviceType)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceType"></param>
+        internal static void RegisterServiceType(ServiceType serviceType)
         {
             if (serviceType != null)
             {
-                lock (KnownTypes)
-                {
-                    var ass = Assembly.GetEntryAssembly()
+                AssemblyName assemblyName = Assembly.GetEntryAssembly()
                                            .GetReferencedAssemblies()
                                            .FirstOrDefault(n => n.Name == serviceType.Assembly);
 
-                    //AssemblyName.GetAssemblyName()
-                    //Type.ReflectionOnlyGetType()
-                    
+                if (assemblyName != null)
+                {
+                    Assembly assembly = Assembly.Load(assemblyName);
+                    if (serviceType.Name == "*")
+                        LoadTypes(assembly.GetTypes());
+                    else
+                        LoadType(assembly.GetType(serviceType.Name, false, true));
                 }
             }
         }
@@ -103,7 +109,6 @@ namespace WcfJsonFormatter
                         (
                             type =>
                             {
-                                //KnownTypes.Add(type);
                                 if (!KnownTypes.Any(n => n.Name.Equals(type.Name)))
                                     KnownTypes.Add(type);
 

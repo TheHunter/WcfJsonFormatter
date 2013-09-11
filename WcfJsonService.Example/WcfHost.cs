@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
@@ -17,6 +19,7 @@ namespace WcfJsonService.Example
         static void Main()
         {
             WcfHost host = new WcfHost();
+            
             host.Initialize();
             host.Run();
         }

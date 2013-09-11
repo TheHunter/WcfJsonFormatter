@@ -19,11 +19,20 @@ namespace WcfJsonFormatter
         private readonly List<OperationParameter> operationParameters;
         private readonly OperationResult operationResult;
 
+        /// <summary>
+        /// 
+        /// </summary>
         static MessageFormatter()
         {
             var register = ConfigurationManager.GetSection("serviceTypeRegister") as ServiceTypeRegister;
             if (register != null)
-                Console.WriteLine(register);
+            {
+                for (int index = 0; index < register.ServiceTypeCollection.Count; index++)
+                {
+                    DynamicTypeRegister.RegisterServiceType(register.ServiceTypeCollection[index]);
+                }
+            }
+                
         }
 
         /// <summary>

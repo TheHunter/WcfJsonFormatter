@@ -51,6 +51,7 @@
     <Compile Include="Configuration\ServiceTypeCollection.cs" />
     <Compile Include="Configuration\ServiceType.cs" />
     <Compile Include="Configuration\ServiceTypeRegister.cs" />
+    <Compile Include="Configuration\TypeResolver.cs" />
     <Compile Include="DynamicTypeRegister.cs" />
     <Compile Include="IMessageFormatter.cs" />
     <Compile Include="IOperationInfo.cs" />

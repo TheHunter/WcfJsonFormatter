@@ -10,21 +10,17 @@ namespace WcfJsonFormatter.Configuration
         : ConfigurationElementCollection
     {
 
-        //public ServiceTypeCollection()
-        //{
-        //    ServiceType element = (ServiceType)CreateNewElement();
-        //    Add(element);
-        //}
-
         public void Add(ServiceType custom)
         {
             BaseAdd(custom);
         }
 
+
         protected override void BaseAdd(ConfigurationElement element)
         {
             BaseAdd(element, false);
         }
+
 
         public override ConfigurationElementCollectionType CollectionType
         {
@@ -63,6 +59,7 @@ namespace WcfJsonFormatter.Configuration
             }
         }
 
+
         new public ServiceType this[string Name]
         {
             get
@@ -71,10 +68,12 @@ namespace WcfJsonFormatter.Configuration
             }
         }
 
+
         public int indexof(ServiceType element)
         {
             return BaseIndexOf(element);
         }
+
 
         public void Remove(ServiceType url)
         {
@@ -82,15 +81,18 @@ namespace WcfJsonFormatter.Configuration
                 BaseRemove(url.Name);
         }
 
+
         public void RemoveAt(int index)
         {
             BaseRemoveAt(index);
         }
 
+
         public void Remove(string name)
         {
             BaseRemove(name);
         }
+
 
         public void Clear()
         {
