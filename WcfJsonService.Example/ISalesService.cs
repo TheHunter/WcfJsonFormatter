@@ -24,7 +24,8 @@ namespace WcfJsonService.Example
         [OperationContract]
         Salesman GetFirstSalesman(int pageIndex, int pageSize);
 
-        [WebInvoke(BodyStyle = WebMessageBodyStyle.WrappedRequest), OperationContract]
+        //[WebInvoke(BodyStyle = WebMessageBodyStyle.WrappedRequest), OperationContract]
+        [OperationContract]
         IEnumerable<Salesman> GetPagedSalesman(int pageIndex, int pageSize);
 
         [OperationContract]
@@ -37,7 +38,7 @@ namespace WcfJsonService.Example
         bool VerifyContracts(IEnumerable<TradeContract> contracts);
 
         [OperationContract]
-        void SaveCode(TradeContract contract);
+        void SaveCode(TradeContract contract, long number);
 
         [OperationContract]
         TradeContract GetContract(int id);

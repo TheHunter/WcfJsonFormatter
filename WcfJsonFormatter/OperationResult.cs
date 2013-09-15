@@ -5,14 +5,20 @@ using System.Text;
 
 namespace WcfJsonFormatter
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class OperationResult
         : OperationInfo
     {
-        
-        public OperationResult(Type originalType)
-            :base(originalType)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="originalType"></param>
+        /// <param name="action"></param>
+        public OperationResult(Type originalType, string action)
+            : base(originalType, action)
         {
-   
         }
 
     }

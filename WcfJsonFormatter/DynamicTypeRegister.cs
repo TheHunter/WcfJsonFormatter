@@ -11,7 +11,7 @@ using WcfJsonFormatter.Configuration;
 namespace WcfJsonFormatter
 {
     /// <summary>
-    /// A register of object types which registers all known types from operations services.
+    /// A register of object types which registers all known types used by operations services.
     /// </summary>
     public static class DynamicTypeRegister
     {
@@ -41,33 +41,6 @@ namespace WcfJsonFormatter
         /// <returns></returns>
         public static Type NormalizeType(Type arg)
         {
-            #region OLD CODE
-            //if (!arg.IsAbstract && !arg.IsInterface) 
-            //    return arg;
-
-            //var t0 = Converters.FirstOrDefault(n => n.Key.Name == arg.Name);
-            //if (t0.Value != null)
-            //{
-            //    if (!t0.Value.IsGenericType) return t0.Value;
-
-            //    return t0.Value.MakeGenericType(arg.GetGenericArguments());
-            //}
-
-            //// non generico
-            //if (!arg.IsGenericType)
-            //    return Converters.Values.FirstOrDefault(arg.IsAssignableFrom);
-
-            //return Converters.Values.Select(current => current.MakeGenericType(arg.GetGenericArguments()))
-            //                        .FirstOrDefault(arg.IsAssignableFrom);
-            #endregion
-
-            //ICollection<>
-            //BindingElementCollection cl1 = new BindingElementCollection();
-            //Collection<BindingElement> cl2 = new Collection<BindingElement>();
-            //cl2 = cl1;
-
-            //EntryCollection a;
-
             if (arg.IsPrimitive || (!arg.IsAbstract && !arg.IsInterface))
                 return arg;
 
@@ -81,14 +54,12 @@ namespace WcfJsonFormatter
                 return t0.Value.MakeGenericType(arg.GetGenericArguments());
             }
 
-            // non generico
+            // non generic
             if (!arg.IsGenericType)
                 return Converters.Values.FirstOrDefault(arg.IsAssignableFrom);
 
             Type[] genericArgs = arg.GetGenericArguments();
-            //return Converters.Values.Select(current => current.MakeGenericType(genericArgs))
-            //                        .FirstOrDefault(arg.IsAssignableFrom);
-
+            
             Type supplier = null;
             // tutti i VALORI del dizionario devono essere oggetti di classe concreta..
             Converters.Values.All
@@ -128,24 +99,75 @@ namespace WcfJsonFormatter
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="serviceType"></param>
-        internal static void RegisterServiceType(ServiceType serviceType)
+        /// <param name="register"></param>
+        internal static void LoadServiceTypeRegister(ServiceTypeRegister register)
         {
-            if (serviceType != null)
+            if (register != null)
             {
-                AssemblyName assemblyName = Assembly.GetEntryAssembly()
+                for (int index = 0; index < register.ServiceTypeCollection.Count; index++)
+                {
+                    DynamicTypeRegister.RegisterServiceType(register.ServiceTypeCollection[index]);
+                }
+
+                for (int index = 0; index < register.ResolverTypeCollection.Count; index++)
+                {
+                    DynamicTypeRegister.RegisterResolverType(register.ResolverTypeCollection[index]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceType"></param>
+        private static void RegisterServiceType(ServiceType serviceType)
+        {
+            Assembly entry = GetAssemblyFrom(serviceType);
+            if (entry == null) return;
+            
+            if (serviceType.Name == "*")
+                LoadTypes(entry.GetTypes());
+            else
+                LoadType(entry.GetType(serviceType.Name, false, true));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="resolverType"></param>
+        private static void RegisterResolverType(ResolverType resolverType)
+        {
+            if (resolverType != null)
+            {
+                Assembly serviceAss = GetAssemblyFrom(resolverType.ServiceType);
+                Assembly resolverAss = GetAssemblyFrom(resolverType.ServiceType);
+
+                if (serviceAss == null || resolverAss == null) return;
+
+                Type serviceType = serviceAss.GetType(resolverType.ServiceType.Name, true, true);
+                Type binderType = resolverAss.GetType(resolverType.BinderType.Name, true, true);
+
+                lock (Converters)
+                {
+                    if (!Converters.ContainsKey(serviceType)) Converters.Add(serviceType, binderType);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceType"></param>
+        /// <returns></returns>
+        private static Assembly GetAssemblyFrom(ServiceType serviceType)
+        {
+            if (serviceType == null) return null;
+
+            AssemblyName assemblyName = Assembly.GetEntryAssembly()
                                            .GetReferencedAssemblies()
                                            .FirstOrDefault(n => n.Name == serviceType.Assembly);
 
-                if (assemblyName != null)
-                {
-                    Assembly assembly = Assembly.Load(assemblyName);
-                    if (serviceType.Name == "*")
-                        LoadTypes(assembly.GetTypes());
-                    else
-                        LoadType(assembly.GetType(serviceType.Name, false, true));
-                }
-            }
+            return assemblyName != null ? Assembly.Load(assemblyName) : null;
         }
 
         /// <summary>

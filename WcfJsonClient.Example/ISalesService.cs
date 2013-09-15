@@ -23,7 +23,8 @@ namespace WcfJsonClient.Example
         [OperationContract]
         Salesman GetFirstSalesman(int pageIndex, int pageSize);
 
-        [WebInvoke(BodyStyle = WebMessageBodyStyle.WrappedRequest), OperationContract]
+        //[WebInvoke(BodyStyle = WebMessageBodyStyle.WrappedRequest), OperationContract]
+        [OperationContract]
         IEnumerable<Salesman> GetPagedSalesman(int pageIndex, int pageSize);
 
         [OperationContract]
@@ -36,7 +37,7 @@ namespace WcfJsonClient.Example
         bool VerifyContracts(IEnumerable<TradeContract> contracts);
 
         [OperationContract]
-        void SaveCode(TradeContract contract);
+        void SaveCode(TradeContract contract, long number);
 
         [OperationContract]
         TradeContract GetContract(int id);
@@ -106,9 +107,9 @@ namespace WcfJsonClient.Example
             return this.Channel.VerifyContracts(contracts);
         }
 
-        public void SaveCode(TradeContract contract)
+        public void SaveCode(TradeContract contract, long number)
         {
-            this.Channel.SaveCode(contract);
+            this.Channel.SaveCode(contract, number);
         }
 
         public TradeContract GetContract(int id)

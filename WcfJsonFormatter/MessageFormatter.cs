@@ -6,6 +6,7 @@ using System.Reflection;
 using System.ServiceModel.Description;
 using System.Text;
 using WcfJsonFormatter.Configuration;
+using WcfJsonFormatter.Exceptions;
 
 namespace WcfJsonFormatter
 {
@@ -25,14 +26,7 @@ namespace WcfJsonFormatter
         static MessageFormatter()
         {
             var register = ConfigurationManager.GetSection("serviceTypeRegister") as ServiceTypeRegister;
-            if (register != null)
-            {
-                for (int index = 0; index < register.ServiceTypeCollection.Count; index++)
-                {
-                    DynamicTypeRegister.RegisterServiceType(register.ServiceTypeCollection[index]);
-                }
-            }
-                
+            DynamicTypeRegister.LoadServiceTypeRegister(register);
         }
 
         /// <summary>
@@ -46,20 +40,12 @@ namespace WcfJsonFormatter
             this.action = action;
             this.operationParameters = new List<OperationParameter>
                 (
-                    parameters.Select(n => new OperationParameter(n.Name, n.ParameterType))
+                    parameters.Select(n => new OperationParameter(n.Name, action, n.ParameterType))
                 );
-            this.operationResult = new OperationResult(returnType);
+            //new ServiceOperationException("The service operation cannot be invoked because It has wrong parameters, see innerException for details.", action, ex);
 
-            //this.operationParameters.All
-            //    (
-            //        info =>
-            //        {
-            //            DynamicTypeRegister.LoadTypes(info.OrginalType.Assembly);
-            //            return true;
-            //        }
-            //    );
-
-            //DynamicTypeRegister.LoadTypes(this.operationResult.OrginalType.Assembly);
+            this.operationResult = new OperationResult(returnType, action);
+            //new ServiceOperationException("The service operation cannot be invoked because It has an invalid return object type, see innerException for details", action, ex);
         }
 
         /// <summary>

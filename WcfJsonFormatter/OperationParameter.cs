@@ -17,9 +17,10 @@ namespace WcfJsonFormatter
         /// 
         /// </summary>
         /// <param name="name"></param>
+        /// <param name="action"></param>
         /// <param name="originalType"></param>
-        public OperationParameter(string name, Type originalType)
-            :base(originalType)
+        public OperationParameter(string name, string action, Type originalType)
+            :base(originalType, action)
         {
             this.name = name;
         }
@@ -29,7 +30,6 @@ namespace WcfJsonFormatter
         /// </summary>
         public string Name { get { return this.name; } }
 
-        
     }
 
 }

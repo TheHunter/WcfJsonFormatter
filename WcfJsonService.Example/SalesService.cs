@@ -98,6 +98,12 @@ namespace WcfJsonService.Example
             return result.GetResult();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <param name="code"></param>
+        /// <returns></returns>
         public Salesman UpdateCode(Salesman instance, int code)
         {
             if (instance == null)
@@ -107,20 +113,35 @@ namespace WcfJsonService.Example
             return instance;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="contracts"></param>
+        /// <returns></returns>
         public bool VerifyContracts(IEnumerable<TradeContract> contracts)
         {
-            return true;
+            return (contracts != null && contracts.Any());
         }
 
-        public void SaveCode(TradeContract contract)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="contract"></param>
+        /// <param name="number"></param>
+        public void SaveCode(TradeContract contract, long number)
         {
-            contract.Number = 200;
+            if (contract != null)
+                contract.Number = number;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public TradeContract GetContract(int id)
         {
-            return null;
+            return customPagedDAO.FindBy<TradeContract, long?>(id, LockMode.Read);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -13,23 +14,44 @@ namespace WcfJsonFormatter.Configuration
         : ConfigServiceElement
     {
         [ConfigurationProperty("serviceType", IsRequired = true)]
-        public string ServiceType
+        public ServiceType ServiceType
         {
-            get { return (string)this["name"]; }
-            set { this["name"] = value; }
+            get { return (ServiceType)this["serviceType"]; }
+            set { this["serviceType"] = value; }
         }
 
         [ConfigurationProperty("binderType", IsRequired = true)]
-        public string BinderType
+        public ServiceType BinderType
         {
-            get { return (string)this["assembly"]; }
-            set { this["assembly"] = value; }
+            get { return (ServiceType)this["binderType"]; }
+            set { this["binderType"] = value; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override void PostDeserialize()
+        {
+            base.PostDeserialize();
+            if (this.ServiceType.Name == "*")
+                throw new ArgumentException("The ServiceType property of ResolverType must contain a valid CLR type name to be resolved by binder type associated.");
 
+            if (this.BinderType.Name == "*")
+                throw new ArgumentException("The BinderType property of ResolverType must contain a valid CLR type name to resolve the service type associated.");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public override object Key
         {
             get { return this.ServiceType; }
+        }
+
+
+        public override string ToString()
+        {
+            return string.Format("serviceType: {0}, binderType: {1}", this.ServiceType, this.BinderType);
         }
     }
 }

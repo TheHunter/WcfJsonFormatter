@@ -53,7 +53,11 @@
     <Compile Include="Configuration\ServiceType.cs" />
     <Compile Include="Configuration\ServiceTypeRegister.cs" />
     <Compile Include="Configuration\ResolverType.cs" />
+    <Compile Include="CustomContractResolver.cs" />
     <Compile Include="DynamicTypeRegister.cs" />
+    <Compile Include="Exceptions\ServiceException.cs" />
+    <Compile Include="Exceptions\ServiceOperationException.cs" />
+    <Compile Include="Exceptions\TypeUnresolvedException.cs" />
     <Compile Include="IMessageFormatter.cs" />
     <Compile Include="IOperationInfo.cs" />
     <Compile Include="JsonBinaryConverter.cs" />

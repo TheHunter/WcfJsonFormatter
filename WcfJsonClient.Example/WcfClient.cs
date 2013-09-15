@@ -28,6 +28,7 @@ namespace WcfJsonClient.Example
             //DynamicTypeRegister.LoadTypes(typeof(Salesman).Assembly);
         }
 
+
         private void Run()
         {
             string baseAddress = "http://" + Environment.MachineName + ":8000/Service.svc";
@@ -154,11 +155,11 @@ namespace WcfJsonClient.Example
                     Console.WriteLine("col2 value: {0}", col2);
                     Console.WriteLine();
 
-                    proxy.SaveCode(new CarContract{ Description = "my car", Price = 25000});
+                    proxy.SaveCode(new CarContract{ Description = "my car", Price = 25000}, 200);
                     Console.WriteLine("TradeContract saved");
                     Console.WriteLine();
 
-                    TradeContract contract = proxy.GetContract(-1);
+                    TradeContract contract = proxy.GetContract(1);
                     Console.WriteLine("TradeContract value: {0}", contract);
                     Console.WriteLine();
 

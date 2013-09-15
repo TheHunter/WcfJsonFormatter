@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
@@ -26,10 +25,21 @@ namespace WcfJsonFormatter.Configuration
             set { this["assembly"] = value; }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public override object Key
         {
             get { return this.Name; }
-        }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Format("name: {0}, assembly: {1}", this.Name, this.Assembly);
+        }
     }
 }

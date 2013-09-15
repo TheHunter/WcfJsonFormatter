@@ -14,32 +14,52 @@ namespace WcfJsonFormatter.Configuration
         : ConfigurationElementCollection
         where TElement : ConfigServiceElement, new()
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="custom"></param>
+
+        private readonly string propertyName;
+
+
+        public ServiceTypeCollection()
+        {
+            string naming = (typeof(TElement).Name);
+            this.propertyName = string.Format("{0}{1}", naming.Substring(0, 1).ToLower(), naming.Substring(1));
+        }
+
+
+        protected override string ElementName
+        {
+            get
+            {
+                return this.propertyName;
+            }
+        }
+
+        protected override bool IsElementName(string elementName)
+        {
+            return elementName.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         public void Add(TElement custom)
         {
             BaseAdd(custom);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="element"></param>
+
         protected override void BaseAdd(ConfigurationElement element)
         {
             BaseAdd(element, false);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
+
         public override ConfigurationElementCollectionType CollectionType
         {
             get
             {
-                return ConfigurationElementCollectionType.AddRemoveClearMap;
+                return ConfigurationElementCollectionType.BasicMapAlternate;
             }
         }
 

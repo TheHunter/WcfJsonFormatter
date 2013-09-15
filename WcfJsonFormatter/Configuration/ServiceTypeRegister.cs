@@ -9,14 +9,12 @@ namespace WcfJsonFormatter.Configuration
     /// <summary>
     /// 
     /// </summary>
-    public class ServiceTypeRegister
+    internal class ServiceTypeRegister
         : ConfigurationSection
     {
-        
+
         [ConfigurationProperty("serviceTypes", IsDefaultCollection = false)]
-        [ConfigurationCollection(typeof(ServiceTypeCollection<ServiceType>), AddItemName = "add",
-            ClearItemsName = "clear",
-            RemoveItemName = "remove")]
+        [ConfigurationCollection(typeof(ServiceTypeCollection<ServiceType>))]
         public ServiceTypeCollection<ServiceType> ServiceTypeCollection
         {
             get { return (ServiceTypeCollection<ServiceType>)base["serviceTypes"]; }
@@ -24,9 +22,6 @@ namespace WcfJsonFormatter.Configuration
 
 
         [ConfigurationProperty("resolverTypes", IsDefaultCollection = false)]
-        [ConfigurationCollection(typeof(ServiceTypeCollection<ResolverType>), AddItemName = "add",
-            ClearItemsName = "clear",
-            RemoveItemName = "remove")]
         public ServiceTypeCollection<ResolverType> ResolverTypeCollection
         {
             get { return (ServiceTypeCollection<ResolverType>)base["resolverTypes"]; }

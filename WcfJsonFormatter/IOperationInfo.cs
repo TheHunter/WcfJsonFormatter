@@ -19,5 +19,10 @@ namespace WcfJsonFormatter
         /// 
         /// </summary>
         Type NormalizedType { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        string Action { get; }
     }
 }
