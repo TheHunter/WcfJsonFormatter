@@ -72,6 +72,7 @@
     <Compile Include="RawContentMapper.cs" />
     <Compile Include="OperationTypeBinder.cs" />
     <Compile Include="WebHttpJsonBehavior.cs" />
+    <Compile Include="WebHttpJsonBehaviorElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

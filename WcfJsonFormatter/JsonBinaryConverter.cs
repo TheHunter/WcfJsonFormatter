@@ -99,16 +99,15 @@ namespace WcfJsonFormatter
                     using (JsonReader reader = new JsonTextReader(sr))
                     {
                         JToken token = Serializer.Deserialize<JToken>(reader);
-
                         Type type = DynamicTypeRegister.GetTypeByShortName(JTokenToDeserialize(token))
                                     ?? returnType.NormalizedType;
 
-                        if (type == null)
-                        {
-                            Exception inner = OperationInfo.MakeGenericError(returnType);
-                            string message = "The service operation cannot be invoked because It has an invalid return object type, see innerException for details.";
-                            throw OperationInfo.MakeOperationException(returnType, message, inner);
-                        }
+                        //if (type == null)
+                        //{
+                        //    Exception inner = OperationInfo.MakeGenericError(returnType);
+                        //    string message = "The service operation cannot be invoked because It has an invalid return object type, see innerException for details.";
+                        //    throw OperationInfo.MakeOperationException(returnType, message, inner);
+                        //}
 
                         object ret = token.ToObject(type, Serializer);
                         return ret;
@@ -146,12 +145,15 @@ namespace WcfJsonFormatter
                                 Type type = DynamicTypeRegister.GetTypeByShortName(JTokenToDeserialize(property.Value))
                                             ?? parameter.NormalizedType;
 
-                                if (type == null)
-                                {
-                                    Exception inner = OperationInfo.MakeGenericError(parameter);
-                                    string message = "The service operation cannot be invoked because It has wrong parameters, see innerException for details.";
-                                    throw OperationInfo.MakeOperationException(parameter, message, inner);
-                                }
+                                //if (type == null)
+                                //{
+                                //    Exception inner = OperationInfo.MakeGenericError(parameter);
+                                //    string message = "The service operation cannot be invoked because It has wrong parameters, see innerException for details.";
+                                //    throw OperationInfo.MakeOperationException(parameter, message, inner);
+                                //}
+
+                                // NOTA: se l'oggetto type non fosse nullo, viene sempre richiamato il binder
+                                // in presenza della proprietà $id ??
 
                                 parameters[++indexParam] = property.Value.ToObject(type, Serializer);
                             }

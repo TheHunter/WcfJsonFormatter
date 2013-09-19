@@ -47,21 +47,22 @@ namespace WcfJsonService.Example
             string baseAddress = "http://" + Environment.MachineName + ":8000/Service.svc";
 
             using (ServiceHost serviceHost = new ServiceHost(typeof(SalesService), new Uri(baseAddress)))
+            //using (ServiceHost serviceHost = new ServiceHost(typeof(SalesService)))
             {
-                WebHttpBinding webBinding = new WebHttpBinding
-                    {
-                        ContentTypeMapper = new RawContentMapper(),
-                        MaxReceivedMessageSize = 4194304,
-                        MaxBufferSize = 4194304
-                    };
+                //
+                //WebHttpBinding webBinding = new WebHttpBinding
+                //    {
+                //        ContentTypeMapper = new RawContentMapper(),
+                //        MaxReceivedMessageSize = 4194304,
+                //        MaxBufferSize = 4194304
+                //    };
 
-                //WSHttpBinding wsHttpBinding = new WSHttpBinding();
+                //serviceHost.AddServiceEndpoint(typeof(ISalesService), webBinding, "json")
+                //    .Behaviors.Add(new WebHttpJsonBehavior());
+                //
 
-                serviceHost.AddServiceEndpoint(typeof(ISalesService), new BasicHttpBinding(), baseAddress);
+                //serviceHost.AddServiceEndpoint(typeof(ISalesService), new BasicHttpBinding(), baseAddress);
 
-                serviceHost.AddServiceEndpoint(typeof(ISalesService), webBinding, "json")
-                    .Behaviors.Add(new WebHttpJsonBehavior());
-                
                 serviceHost.AddDependencyInjectionBehavior<ISalesService>(AutofacHostFactory.Container);
 
                 Console.WriteLine("Opening the host");
