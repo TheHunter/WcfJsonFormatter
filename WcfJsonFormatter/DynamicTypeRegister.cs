@@ -16,9 +16,6 @@ namespace WcfJsonFormatter
     /// </summary>
     public static class DynamicTypeRegister
     {
-        private static readonly HashSet<Type> KnownTypes;
-        private static readonly Dictionary<Type, Type> Resolvers;
-        private static readonly HashSet<Assembly> Assemblies;
         private static readonly ServiceTypeRegister ConfigRegister;
 
         /// <summary>
@@ -26,18 +23,8 @@ namespace WcfJsonFormatter
         /// </summary>
         static DynamicTypeRegister()
         {
-            KnownTypes = new HashSet<Type>();
-
-            Resolvers = new Dictionary<Type, Type>();
-            Resolvers.Add(typeof(IEnumerable<>), typeof(List<>));
-            Resolvers.Add(typeof(IList<>), typeof(List<>));
-            Resolvers.Add(typeof(ICollection<>), typeof(Collection<>));
-            Resolvers.Add(typeof(IDictionary<,>), typeof(Dictionary<,>));
-
-            Assemblies = new HashSet<Assembly>();
-
-            ConfigRegister = ConfigurationManager.GetSection("serviceTypeRegister") as ServiceTypeRegister;
-            LoadServiceTypeRegister();
+            ConfigRegister = ConfigurationManager.GetSection("serviceTypeRegister") as ServiceTypeRegister
+                            ?? new ServiceTypeRegister();
         }
 
         /// <summary>
@@ -57,143 +44,94 @@ namespace WcfJsonFormatter
         /// <returns></returns>
         public static Type NormalizeType(Type arg)
         {
+
+            lock (ConfigRegister)
+            {
+                if (arg.IsGenericType && !arg.IsGenericTypeDefinition)
+                    ConfigRegister.LoadTypes(arg.GetGenericArguments());
+            }
+
             if (IsConcreteType(arg))
                 return arg;
 
-            KeyValuePair<Type, Type> t0 = Resolvers.FirstOrDefault(n => n.Key.Name == arg.Name);
-
-            if (t0.Value != null)
+            Type supplier;
+            lock (ConfigRegister)
             {
-                if (!t0.Value.IsGenericType)
-                    return t0.Value;
-
-                return t0.Value.MakeGenericType(arg.GetGenericArguments());
+                supplier = ConfigRegister.TryToNormalize(arg);
             }
-
-            // non generic
-            if (!arg.IsGenericType)
-                return Resolvers.Values.FirstOrDefault(arg.IsAssignableFrom);
-
-            Type[] genericArgs = arg.GetGenericArguments();
-            
-            Type supplier = null;
-            // tutti i VALORI del dizionario devono essere oggetti di classe concreta..
-            Resolvers.Values.All
-                (
-                    type =>
-                        {
-                            try
-                            {
-                                supplier = null;
-
-                                if (arg.IsAssignableFrom(type))
-                                {
-                                    supplier = type;
-                                    return false;
-                                }
-
-                                if (type.IsGenericType)
-                                {
-                                    supplier = type.MakeGenericType(genericArgs);
-
-                                    if (arg.IsAssignableFrom(supplier))
-                                        return false;
-                                }
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-
-                            return true;
-                        }
-                );
-
             return supplier;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private static void LoadServiceTypeRegister()
-        {
-            if (ConfigRegister == null) return;
+        
+        //private static void LoadServiceTypeRegister()
+        //{
+        //    if (ConfigRegister == null) return;
 
-            DynamicTypeRegister.RegisterServiceType(ConfigRegister.ServiceTypeCollection);
-            DynamicTypeRegister.RegisterResolverType(ConfigRegister.ResolverTypeCollection);
-        }
+        //    DynamicTypeRegister.RegisterServiceType(ConfigRegister.ServiceTypeCollection);
+        //    DynamicTypeRegister.RegisterResolverType(ConfigRegister.ResolverTypeCollection);
+        //}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="serviceTypes"></param>
-        internal static void RegisterServiceType(ServiceTypeCollection<ServiceType> serviceTypes)
-        {
-            if (serviceTypes != null)
-            {
-                for (int index = 0; index < serviceTypes.Count; index++ )
-                {
-                    ServiceType serviceType = serviceTypes[index];
+        
+        //internal static void RegisterServiceType(ServiceTypeCollection<ServiceType> serviceTypes)
+        //{
+        //    if (serviceTypes != null)
+        //    {
+        //        for (int index = 0; index < serviceTypes.Count; index++ )
+        //        {
+        //            ServiceType serviceType = serviceTypes[index];
 
-                    if (serviceType == null) continue;
+        //            if (serviceType == null) continue;
 
-                    Assembly entry = GetAssemblyFrom(serviceType);
-                    if (entry == null) return;
+        //            Assembly entry = GetAssemblyFrom(serviceType);
+        //            if (entry == null) return;
 
-                    if (serviceType.Name == "*")
-                        LoadTypes(entry.GetTypes());
-                    else
-                        LoadType(entry.GetType(serviceType.Name, false, true));
-                }
-            }
-        }
+        //            if (serviceType.Name == "*")
+        //                LoadTypes(entry.GetTypes());
+        //            else
+        //                LoadType(entry.GetType(serviceType.Name, false, true));
+        //        }
+        //    }
+        //}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="resolverTypes"></param>
-        internal static void RegisterResolverType(ServiceTypeCollection<ResolverType> resolverTypes)
-        {
-            if (resolverTypes != null)
-            {
-                for (int index = 0; index < resolverTypes.Count; index++)
-                {
-                    ResolverType resolverType = resolverTypes[index];
-                    if (resolverType == null || resolverType.WasResolved) continue;
+        
+        //internal static void RegisterResolverType(ServiceTypeCollection<ResolverType> resolverTypes)
+        //{
+        //    if (resolverTypes != null)
+        //    {
+        //        for (int index = 0; index < resolverTypes.Count; index++)
+        //        {
+        //            ResolverType resolverType = resolverTypes[index];
+        //            if (resolverType == null || resolverType.WasResolved) continue;
 
-                    Assembly serviceAss = GetAssemblyFrom(resolverType.ServiceType);
-                    Assembly resolverAss = GetAssemblyFrom(resolverType.ServiceType);
+        //            Assembly serviceAss = GetAssemblyFrom(resolverType.ServiceType);
+        //            Assembly resolverAss = GetAssemblyFrom(resolverType.ServiceType);
 
-                    if (serviceAss == null || resolverAss == null) continue;
+        //            if (serviceAss == null || resolverAss == null) continue;
 
-                    Type serviceType = serviceAss.GetType(resolverType.ServiceType.Name, true, true);
-                    Type binderType = resolverAss.GetType(resolverType.BinderType.Name, true, true);
+        //            Type serviceType = serviceAss.GetType(resolverType.ServiceType.Name, true, true);
+        //            Type binderType = resolverAss.GetType(resolverType.BinderType.Name, true, true);
 
-                    resolverType.WasResolved = true;
-                    lock (Resolvers)
-                    {
-                        if (!Resolvers.ContainsKey(serviceType))
-                            Resolvers.Add(serviceType, binderType);
-                    }
-                }
-            }
-        }
+        //            resolverType.WasResolved = true;
+        //            lock (Resolvers)
+        //            {
+        //                if (!Resolvers.ContainsKey(serviceType))
+        //                    Resolvers.Add(serviceType, binderType);
+        //            }
+        //        }
+        //    }
+        //}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="serviceType"></param>
-        /// <returns></returns>
-        private static Assembly GetAssemblyFrom(ServiceType serviceType)
-        {
-            if (serviceType == null) return null;
+        
+        //private static Assembly GetAssemblyFrom(ServiceType serviceType)
+        //{
+        //    if (serviceType == null) return null;
 
-            AssemblyName assemblyName = Assembly.GetEntryAssembly()
-                                           .GetReferencedAssemblies()
-                                           .FirstOrDefault(n => n.Name == serviceType.Assembly);
+        //    AssemblyName assemblyName = Assembly.GetEntryAssembly()
+        //                                   .GetReferencedAssemblies()
+        //                                   .FirstOrDefault(n => n.Name == serviceType.Assembly);
 
-            return assemblyName != null ? Assembly.Load(assemblyName) : Assemblies.FirstOrDefault( n => n.GetName().Name == serviceType.Assembly);
-        }
+        //    return assemblyName != null ? Assembly.Load(assemblyName) : Assemblies.FirstOrDefault( n => n.GetName().Name == serviceType.Assembly);
+        //}
 
         /// <summary>
         /// Registers the given object type if there's no registered.
@@ -201,14 +139,12 @@ namespace WcfJsonFormatter
         /// <param name="current"></param>
         public static void LoadType(Type current)
         {
-            lock (KnownTypes)
-            {
-                if (!KnownTypes.Contains(current))
-                    KnownTypes.Add(current);
+            if (current == null)
+                return;
 
-                Assembly ass = current.Assembly;
-                if (!Assemblies.Contains(ass))
-                    Assemblies.Add(ass);
+            lock (ConfigRegister)
+            {
+                ConfigRegister.LoadType(current);
             }
         }
 
@@ -218,16 +154,12 @@ namespace WcfJsonFormatter
         /// <param name="types"></param>
         public static void LoadTypes(IEnumerable<Type> types)
         {
-            if (types != null)
+            if (types == null)
+                return;
+
+            lock (ConfigRegister)
             {
-                types.All
-                    (
-                        type =>
-                        {
-                            LoadType(type);
-                            return true;
-                        }
-                    );
+                ConfigRegister.LoadTypes(types);
             }
         }
 
@@ -240,54 +172,10 @@ namespace WcfJsonFormatter
             if (assembly == null)
                 return;
 
-            LoadTypes(assembly.GetTypes());
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        private static void InspectType(Type type)
-        {
-            if (type != null)
+            lock (ConfigRegister)
             {
-
-                if (type.IsArray)
-                {
-                    InspectType(type.GetElementType());
-                    return;
-                }
-
-                if (type.IsGenericType)
-                    InspectTypes(type.GetGenericArguments());
-
-                if (IsCollectionType(type))
-                {
-                    LoadType(type);
-                    return;
-                }
-
-                const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy;
-                var properties = type.GetProperties(flags);
-                foreach (var propertyInfo in properties)
-                {
-                    LoadType(propertyInfo.PropertyType);
-                }
+                ConfigRegister.LoadTypes(assembly);
             }
-        }
-
-
-        public static void InspectTypes(IEnumerable<Type> types)
-        {
-            if (types == null) return;
-
-            foreach (var type in types)
-            {
-                InspectType(type);
-            }
-
-            if (ConfigRegister != null)
-                RegisterResolverType(ConfigRegister.ResolverTypeCollection);
         }
 
         /// <summary>
@@ -295,7 +183,7 @@ namespace WcfJsonFormatter
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static bool IsCollectionType(Type type)
+        private static bool IsCollectionType(Type type)
         {
             if (type == null)
                 return false;
@@ -319,9 +207,9 @@ namespace WcfJsonFormatter
             if (string.IsNullOrEmpty(shortName))
                 return null;
 
-            lock (KnownTypes)
+            lock (ConfigRegister)
             {
-                return KnownTypes.FirstOrDefault(n => n.Name.Equals(shortName));
+                return ConfigRegister.KnownTypes.FirstOrDefault(n => n.Name.Equals(shortName));
             }
         }
 
@@ -335,11 +223,15 @@ namespace WcfJsonFormatter
             if (string.IsNullOrEmpty(fullName))
                 return null;
 
-            lock (KnownTypes)
+            lock (ConfigRegister)
             {
-                return KnownTypes.FirstOrDefault(n => n.FullName.Equals(fullName));
+                return ConfigRegister.KnownTypes.FirstOrDefault(n => n.FullName.Equals(fullName));
             }
         }
 
+        public static void RefreshServiceRegister()
+        {
+            ConfigRegister.RefreshRegister();
+        }
     }
 }

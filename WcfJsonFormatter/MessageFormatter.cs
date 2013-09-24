@@ -31,22 +31,14 @@ namespace WcfJsonFormatter
         {
             this.action = action;
 
-            List<Type> types = new List<Type>(parameters.Select(n => n.ParameterType)) {returnType};
-            try
-            {
-                DynamicTypeRegister.InspectTypes(types);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Errore on inspect types.", ex);
-            }
-
             this.operationParameters = new List<OperationParameter>
                 (
                     parameters.Select(n => new OperationParameter(n.Name, action, n.ParameterType, DynamicTypeRegister.NormalizeType))
                 );
 
             this.operationResult = new OperationResult(action, returnType, DynamicTypeRegister.NormalizeType);
+            
+            DynamicTypeRegister.RefreshServiceRegister();
         }
 
         /// <summary>
