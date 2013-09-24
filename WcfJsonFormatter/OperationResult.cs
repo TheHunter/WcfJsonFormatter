@@ -14,10 +14,11 @@ namespace WcfJsonFormatter
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="originalType"></param>
         /// <param name="action"></param>
-        public OperationResult(Type originalType, string action)
-            : base(originalType, action)
+        /// <param name="originalType"></param>
+        /// <param name="normalizer"></param>
+        public OperationResult(string action, Type originalType, Func<Type, Type> normalizer)
+            : base(action, originalType, normalizer)
         {
         }
 

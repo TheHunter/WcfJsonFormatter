@@ -30,7 +30,25 @@ namespace WcfJsonFormatter.Configuration
         /// </summary>
         public override object Key
         {
-            get { return this.Name; }
+            get { return GetHashCode(); }
+        }
+
+
+        public override int GetHashCode()
+        {
+            return 11 * (this.Name.GetHashCode() - this.Assembly.GetHashCode());
+        }
+
+
+        public override bool Equals(object compareTo)
+        {
+            if (compareTo == null)
+                return false;
+
+            if (compareTo is ServiceType)
+                return this.GetHashCode() == compareTo.GetHashCode();
+
+            return false;
         }
 
         /// <summary>

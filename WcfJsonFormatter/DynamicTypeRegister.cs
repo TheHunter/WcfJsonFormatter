@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel.Channels;
@@ -16,8 +17,9 @@ namespace WcfJsonFormatter
     public static class DynamicTypeRegister
     {
         private static readonly HashSet<Type> KnownTypes;
-        private static readonly HashSet<string> Assemblies;
-        private static readonly Dictionary<Type, Type> Converters;
+        private static readonly Dictionary<Type, Type> Resolvers;
+        private static readonly HashSet<Assembly> Assemblies;
+        private static readonly ServiceTypeRegister ConfigRegister;
 
         /// <summary>
         /// 
@@ -25,13 +27,27 @@ namespace WcfJsonFormatter
         static DynamicTypeRegister()
         {
             KnownTypes = new HashSet<Type>();
-            Assemblies = new HashSet<string>();
 
-            Converters = new Dictionary<Type, Type>();
-            Converters.Add(typeof(IEnumerable<>), typeof(List<>));
-            Converters.Add(typeof(IList<>), typeof(List<>));
-            Converters.Add(typeof(ICollection<>), typeof(Collection<>));
-            Converters.Add(typeof(IDictionary<,>), typeof(Dictionary<,>));
+            Resolvers = new Dictionary<Type, Type>();
+            Resolvers.Add(typeof(IEnumerable<>), typeof(List<>));
+            Resolvers.Add(typeof(IList<>), typeof(List<>));
+            Resolvers.Add(typeof(ICollection<>), typeof(Collection<>));
+            Resolvers.Add(typeof(IDictionary<,>), typeof(Dictionary<,>));
+
+            Assemblies = new HashSet<Assembly>();
+
+            ConfigRegister = ConfigurationManager.GetSection("serviceTypeRegister") as ServiceTypeRegister;
+            LoadServiceTypeRegister();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <returns></returns>
+        public static bool IsConcreteType(Type arg)
+        {
+            return arg.IsPrimitive || (!arg.IsAbstract && !arg.IsInterface);
         }
 
         /// <summary>
@@ -41,10 +57,10 @@ namespace WcfJsonFormatter
         /// <returns></returns>
         public static Type NormalizeType(Type arg)
         {
-            if (arg.IsPrimitive || (!arg.IsAbstract && !arg.IsInterface))
+            if (IsConcreteType(arg))
                 return arg;
 
-            KeyValuePair<Type, Type> t0 = Converters.FirstOrDefault(n => n.Key.Name == arg.Name);
+            KeyValuePair<Type, Type> t0 = Resolvers.FirstOrDefault(n => n.Key.Name == arg.Name);
 
             if (t0.Value != null)
             {
@@ -56,13 +72,13 @@ namespace WcfJsonFormatter
 
             // non generic
             if (!arg.IsGenericType)
-                return Converters.Values.FirstOrDefault(arg.IsAssignableFrom);
+                return Resolvers.Values.FirstOrDefault(arg.IsAssignableFrom);
 
             Type[] genericArgs = arg.GetGenericArguments();
             
             Type supplier = null;
             // tutti i VALORI del dizionario devono essere oggetti di classe concreta..
-            Converters.Values.All
+            Resolvers.Values.All
                 (
                     type =>
                         {
@@ -99,19 +115,35 @@ namespace WcfJsonFormatter
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="register"></param>
-        internal static void LoadServiceTypeRegister(ServiceTypeRegister register)
+        private static void LoadServiceTypeRegister()
         {
-            if (register != null)
-            {
-                for (int index = 0; index < register.ServiceTypeCollection.Count; index++)
-                {
-                    DynamicTypeRegister.RegisterServiceType(register.ServiceTypeCollection[index]);
-                }
+            if (ConfigRegister == null) return;
 
-                for (int index = 0; index < register.ResolverTypeCollection.Count; index++)
+            DynamicTypeRegister.RegisterServiceType(ConfigRegister.ServiceTypeCollection);
+            DynamicTypeRegister.RegisterResolverType(ConfigRegister.ResolverTypeCollection);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceTypes"></param>
+        internal static void RegisterServiceType(ServiceTypeCollection<ServiceType> serviceTypes)
+        {
+            if (serviceTypes != null)
+            {
+                for (int index = 0; index < serviceTypes.Count; index++ )
                 {
-                    DynamicTypeRegister.RegisterResolverType(register.ResolverTypeCollection[index]);
+                    ServiceType serviceType = serviceTypes[index];
+
+                    if (serviceType == null) continue;
+
+                    Assembly entry = GetAssemblyFrom(serviceType);
+                    if (entry == null) return;
+
+                    if (serviceType.Name == "*")
+                        LoadTypes(entry.GetTypes());
+                    else
+                        LoadType(entry.GetType(serviceType.Name, false, true));
                 }
             }
         }
@@ -119,37 +151,30 @@ namespace WcfJsonFormatter
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="serviceType"></param>
-        private static void RegisterServiceType(ServiceType serviceType)
+        /// <param name="resolverTypes"></param>
+        internal static void RegisterResolverType(ServiceTypeCollection<ResolverType> resolverTypes)
         {
-            Assembly entry = GetAssemblyFrom(serviceType);
-            if (entry == null) return;
-            
-            if (serviceType.Name == "*")
-                LoadTypes(entry.GetTypes());
-            else
-                LoadType(entry.GetType(serviceType.Name, false, true));
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="resolverType"></param>
-        private static void RegisterResolverType(ResolverType resolverType)
-        {
-            if (resolverType != null)
+            if (resolverTypes != null)
             {
-                Assembly serviceAss = GetAssemblyFrom(resolverType.ServiceType);
-                Assembly resolverAss = GetAssemblyFrom(resolverType.ServiceType);
-
-                if (serviceAss == null || resolverAss == null) return;
-
-                Type serviceType = serviceAss.GetType(resolverType.ServiceType.Name, true, true);
-                Type binderType = resolverAss.GetType(resolverType.BinderType.Name, true, true);
-
-                lock (Converters)
+                for (int index = 0; index < resolverTypes.Count; index++)
                 {
-                    if (!Converters.ContainsKey(serviceType)) Converters.Add(serviceType, binderType);
+                    ResolverType resolverType = resolverTypes[index];
+                    if (resolverType == null || resolverType.WasResolved) continue;
+
+                    Assembly serviceAss = GetAssemblyFrom(resolverType.ServiceType);
+                    Assembly resolverAss = GetAssemblyFrom(resolverType.ServiceType);
+
+                    if (serviceAss == null || resolverAss == null) continue;
+
+                    Type serviceType = serviceAss.GetType(resolverType.ServiceType.Name, true, true);
+                    Type binderType = resolverAss.GetType(resolverType.BinderType.Name, true, true);
+
+                    resolverType.WasResolved = true;
+                    lock (Resolvers)
+                    {
+                        if (!Resolvers.ContainsKey(serviceType))
+                            Resolvers.Add(serviceType, binderType);
+                    }
                 }
             }
         }
@@ -167,7 +192,7 @@ namespace WcfJsonFormatter
                                            .GetReferencedAssemblies()
                                            .FirstOrDefault(n => n.Name == serviceType.Assembly);
 
-            return assemblyName != null ? Assembly.Load(assemblyName) : null;
+            return assemblyName != null ? Assembly.Load(assemblyName) : Assemblies.FirstOrDefault( n => n.GetName().Name == serviceType.Assembly);
         }
 
         /// <summary>
@@ -180,6 +205,10 @@ namespace WcfJsonFormatter
             {
                 if (!KnownTypes.Contains(current))
                     KnownTypes.Add(current);
+
+                Assembly ass = current.Assembly;
+                if (!Assemblies.Contains(ass))
+                    Assemblies.Add(ass);
             }
         }
 
@@ -189,21 +218,16 @@ namespace WcfJsonFormatter
         /// <param name="types"></param>
         public static void LoadTypes(IEnumerable<Type> types)
         {
-            lock (KnownTypes)
+            if (types != null)
             {
-                if (types != null)
-                {
-                    types.All
-                        (
-                            type =>
-                            {
-                                if (!KnownTypes.Any(n => n.Name.Equals(type.Name)))
-                                    KnownTypes.Add(type);
-
-                                return true;
-                            }
-                        );
-                }
+                types.All
+                    (
+                        type =>
+                        {
+                            LoadType(type);
+                            return true;
+                        }
+                    );
             }
         }
 
@@ -213,15 +237,76 @@ namespace WcfJsonFormatter
         /// <param name="assembly"></param>
         public static void LoadTypes(Assembly assembly)
         {
-            lock (KnownTypes)
-            {
-                string assName = assembly.GetName().Name;
-                if (Assemblies.Contains(assName))
-                    return;
+            if (assembly == null)
+                return;
 
-                Assemblies.Add(assName);
-            }
             LoadTypes(assembly.GetTypes());
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        private static void InspectType(Type type)
+        {
+            if (type != null)
+            {
+
+                if (type.IsArray)
+                {
+                    InspectType(type.GetElementType());
+                    return;
+                }
+
+                if (type.IsGenericType)
+                    InspectTypes(type.GetGenericArguments());
+
+                if (IsCollectionType(type))
+                {
+                    LoadType(type);
+                    return;
+                }
+
+                const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy;
+                var properties = type.GetProperties(flags);
+                foreach (var propertyInfo in properties)
+                {
+                    LoadType(propertyInfo.PropertyType);
+                }
+            }
+        }
+
+
+        public static void InspectTypes(IEnumerable<Type> types)
+        {
+            if (types == null) return;
+
+            foreach (var type in types)
+            {
+                InspectType(type);
+            }
+
+            if (ConfigRegister != null)
+                RegisterResolverType(ConfigRegister.ResolverTypeCollection);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool IsCollectionType(Type type)
+        {
+            if (type == null)
+                return false;
+
+            if (type.IsArray)
+                return true;
+
+            Type collectionType = type.GetInterface("IEnumerable", true)
+                                  ?? type.GetInterface("IEnumerable`1", true);
+
+            return collectionType != null;
         }
 
         /// <summary>
@@ -231,6 +316,9 @@ namespace WcfJsonFormatter
         /// <returns></returns>
         public static Type GetTypeByShortName(string shortName)
         {
+            if (string.IsNullOrEmpty(shortName))
+                return null;
+
             lock (KnownTypes)
             {
                 return KnownTypes.FirstOrDefault(n => n.Name.Equals(shortName));
@@ -244,6 +332,9 @@ namespace WcfJsonFormatter
         /// <returns></returns>
         public static Type GetTypeByFullName(string fullName)
         {
+            if (string.IsNullOrEmpty(fullName))
+                return null;
+
             lock (KnownTypes)
             {
                 return KnownTypes.FirstOrDefault(n => n.FullName.Equals(fullName));

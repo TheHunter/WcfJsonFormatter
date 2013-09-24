@@ -11,6 +11,7 @@ namespace WcfJsonFormatter
     /// </summary>
     public class OperationTypeBinder
         : SerializationBinder, ISerializationBinder
+        //: SerializationBinder, Newtonsoft.Json.Serialization.ISerializationBinder
     {
 
         /// <summary>

@@ -13,6 +13,8 @@ namespace WcfJsonFormatter.Configuration
     public class ResolverType
         : ConfigServiceElement
     {
+        private bool wasResolved;
+
         [ConfigurationProperty("serviceType", IsRequired = true)]
         public ServiceType ServiceType
         {
@@ -38,6 +40,8 @@ namespace WcfJsonFormatter.Configuration
 
             if (this.BinderType.Name == "*")
                 throw new ArgumentException("The BinderType property of ResolverType must contain a valid CLR type name to resolve the service type associated.");
+
+            this.wasResolved = false;
         }
 
         /// <summary>
@@ -46,6 +50,13 @@ namespace WcfJsonFormatter.Configuration
         public override object Key
         {
             get { return this.ServiceType; }
+        }
+
+
+        public bool WasResolved
+        {
+            get { return this.wasResolved; }
+            internal set { this.wasResolved = value; }
         }
 
 

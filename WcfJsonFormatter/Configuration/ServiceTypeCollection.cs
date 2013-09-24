@@ -17,14 +17,18 @@ namespace WcfJsonFormatter.Configuration
 
         private readonly string propertyName;
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public ServiceTypeCollection()
         {
             string naming = (typeof(TElement).Name);
             this.propertyName = string.Format("{0}{1}", naming.Substring(0, 1).ToLower(), naming.Substring(1));
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         protected override string ElementName
         {
             get
@@ -33,28 +37,46 @@ namespace WcfJsonFormatter.Configuration
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="elementName"></param>
+        /// <returns></returns>
         protected override bool IsElementName(string elementName)
         {
             return elementName.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override bool IsReadOnly()
         {
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="custom"></param>
         public void Add(TElement custom)
         {
             BaseAdd(custom);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="element"></param>
         protected override void BaseAdd(ConfigurationElement element)
         {
             BaseAdd(element, false);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public override ConfigurationElementCollectionType CollectionType
         {
             get
@@ -85,34 +107,21 @@ namespace WcfJsonFormatter.Configuration
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="Index"></param>
+        /// <param name="index"></param>
         /// <returns></returns>
-        public TElement this[int Index]
+        public TElement this[int index]
         {
             get
             {
-                return (TElement)BaseGet(Index);
+                return (TElement)BaseGet(index);
             }
             set
             {
-                if (BaseGet(Index) != null)
+                if (BaseGet(index) != null)
                 {
-                    BaseRemoveAt(Index);
+                    BaseRemoveAt(index);
                 }
-                BaseAdd(Index, value);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Name"></param>
-        /// <returns></returns>
-        new public TElement this[string Name]
-        {
-            get
-            {
-                return (TElement)BaseGet(Name);
+                BaseAdd(index, value);
             }
         }
 
@@ -121,7 +130,7 @@ namespace WcfJsonFormatter.Configuration
         /// </summary>
         /// <param name="element"></param>
         /// <returns></returns>
-        public int indexof(TElement element)
+        public int IndexOf(TElement element)
         {
             return BaseIndexOf(element);
         }
@@ -145,14 +154,14 @@ namespace WcfJsonFormatter.Configuration
             BaseRemoveAt(index);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
-        public void Remove(string name)
-        {
-            BaseRemove(name);
-        }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="name"></param>
+        //public void Remove(string name)
+        //{
+        //    BaseRemove(name);
+        //}
 
         /// <summary>
         /// 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
@@ -50,7 +51,7 @@ namespace WcfJsonFormatter
             if (operationDescription.Messages[0].Body.Parts.Count == 0)
                 // nothing in the body, still use the default
                 return base.GetRequestDispatchFormatter(operationDescription, endpoint);
-
+            
             return new JsonDispatchMessageFormatter(operationDescription);
         }
 

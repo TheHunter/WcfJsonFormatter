@@ -27,7 +27,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;CODE_ANALYSIS;BEFORE_NET40</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -63,6 +63,7 @@
     <Compile Include="JsonBinaryConverter.cs" />
     <Compile Include="JsonClientMessageFormatter.cs" />
     <Compile Include="JsonDispatchMessageFormatter.cs" />
+    <Compile Include="JsonReaderConverter.cs" />
     <Compile Include="MessageFormatter.cs" />
     <Compile Include="OperationInfo.cs" />
     <Compile Include="OperationParameter.cs" />

@@ -15,17 +15,21 @@ namespace WcfJsonFormatter
         private readonly Type originalType;
         private readonly Type normalizedType;
         private readonly string action;
+        private readonly Func<Type, Type> normalizer;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="originalType"></param>
         /// <param name="action"></param>
-        protected OperationInfo(Type originalType, string action)
+        /// <param name="originalType"></param>
+        /// <param name="normalizer"></param>
+        protected OperationInfo(string action, Type originalType, Func<Type, Type> normalizer)
         {
             this.action = action;
             this.originalType = originalType;
-            this.normalizedType = DynamicTypeRegister.NormalizeType(originalType);
+            this.normalizer = normalizer;
+            //this.normalizedType = DynamicTypeRegister.NormalizeType(originalType);
+            this.normalizedType = this.normalizer.Invoke(originalType);
         }
 
         /// <summary>

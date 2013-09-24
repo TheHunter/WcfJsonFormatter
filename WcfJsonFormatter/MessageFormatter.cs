@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Reflection;
+using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Text;
 using WcfJsonFormatter.Configuration;
@@ -23,29 +24,29 @@ namespace WcfJsonFormatter
         /// <summary>
         /// 
         /// </summary>
-        static MessageFormatter()
-        {
-            var register = ConfigurationManager.GetSection("serviceTypeRegister") as ServiceTypeRegister;
-            DynamicTypeRegister.LoadServiceTypeRegister(register);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="action"></param>
         /// <param name="parameters"></param>
         /// <param name="returnType"></param>
         protected MessageFormatter(string action, IEnumerable<ParameterInfo> parameters, Type returnType)
         {
             this.action = action;
+
+            List<Type> types = new List<Type>(parameters.Select(n => n.ParameterType)) {returnType};
+            try
+            {
+                DynamicTypeRegister.InspectTypes(types);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Errore on inspect types.", ex);
+            }
+
             this.operationParameters = new List<OperationParameter>
                 (
-                    parameters.Select(n => new OperationParameter(n.Name, action, n.ParameterType))
+                    parameters.Select(n => new OperationParameter(n.Name, action, n.ParameterType, DynamicTypeRegister.NormalizeType))
                 );
-            //new ServiceOperationException("The service operation cannot be invoked because It has wrong parameters, see innerException for details.", action, ex);
 
-            this.operationResult = new OperationResult(returnType, action);
-            //new ServiceOperationException("The service operation cannot be invoked because It has an invalid return object type, see innerException for details", action, ex);
+            this.operationResult = new OperationResult(action, returnType, DynamicTypeRegister.NormalizeType);
         }
 
         /// <summary>

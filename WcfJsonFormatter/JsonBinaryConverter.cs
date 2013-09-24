@@ -276,7 +276,11 @@ namespace WcfJsonFormatter
                 return null;
 
             typeName = typeName.Trim();
-            typeName = typeName.Substring(0, typeName.IndexOf(',')).Trim();
+
+            int index = typeName.IndexOf(',');
+            if (index > -1)
+                typeName = typeName.Substring(0, index).Trim();
+
             return typeName.Substring(typeName.LastIndexOf('.') + 1).Trim();
         }
 

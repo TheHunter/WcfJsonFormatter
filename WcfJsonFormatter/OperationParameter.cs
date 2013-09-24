@@ -19,8 +19,9 @@ namespace WcfJsonFormatter
         /// <param name="name"></param>
         /// <param name="action"></param>
         /// <param name="originalType"></param>
-        public OperationParameter(string name, string action, Type originalType)
-            :base(originalType, action)
+        /// <param name="normalizer"></param>
+        public OperationParameter(string name, string action, Type originalType, Func<Type, Type> normalizer)
+            : base(action, originalType, normalizer)
         {
             this.name = name;
         }
