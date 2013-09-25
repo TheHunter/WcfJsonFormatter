@@ -165,16 +165,21 @@ namespace WcfJsonFormatter.Configuration
             {
                 if (serviceType.IsGenericTypeDefinition)
                 {
-                    this.undefinedResolvers.Add(serviceType, binderType);
+                    //this.undefinedResolvers.Add(serviceType, binderType);
+                    if (!this.undefinedResolvers.Keys.Contains(serviceType))
+                        this.undefinedResolvers.Add(serviceType, binderType);
                 }
                 else
                 {
                     if (binderType.IsGenericType)
                     {
                         binderType = binderType.GetGenericTypeDefinition();
-                        binderType = binderType.MakeGenericType(serviceType.GetGenericArguments());
-                        if (serviceType.IsAssignableFrom(binderType))
-                            this.concreteResolvers.Add(serviceType, binderType);
+                        if (binderType != null)
+                        {
+                            binderType = binderType.MakeGenericType(serviceType.GetGenericArguments());
+                            if (serviceType.IsAssignableFrom(binderType))
+                                this.concreteResolvers.Add(serviceType, binderType);
+                        }
                     }
                     //else
                     //{
@@ -191,9 +196,15 @@ namespace WcfJsonFormatter.Configuration
             }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         internal Type TryToNormalize(Type type)
         {
+            this.InspectType(type);
+            
             Type ret = this.concreteResolvers.ContainsKey(type)
                             ? this.concreteResolvers[type]
                             : this.concreteResolvers.Values.FirstOrDefault(type.IsAssignableFrom);
@@ -209,6 +220,32 @@ namespace WcfJsonFormatter.Configuration
                 }
             }
             return ret;
+        }
+
+        private void InspectType(Type type)
+        {
+            if (type.IsGenericType && !type.IsGenericTypeDefinition)
+            {
+                var generics = type.GetGenericArguments().Where(n => !knownTypes.Contains(n));
+                foreach (var generic in generics)
+                {
+                    InspectType(generic);
+                }
+            }
+
+            if (!this.IsCollection(type))
+            {
+                this.LoadType(type);
+                if (type.IsPrimitive)
+                    return;
+
+                BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.GetProperty | BindingFlags.SetProperty;
+                var properties = type.GetProperties(flags).Where(n => !knownTypes.Contains(n.PropertyType));
+                foreach (var property in properties)
+                {
+                    this.InspectType(property.PropertyType);
+                }
+            }
         }
 
         /// <summary>
@@ -277,6 +314,38 @@ namespace WcfJsonFormatter.Configuration
         {
             this.RegisterResolverType();
             return resolverTypes.All(n => n.WasResolved);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private bool IsConcreteClass(Type type)
+        {
+            if (type == null)
+                return false;
+
+            return type.IsPrimitive || (!type.IsAbstract && !type.IsInterface);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private bool IsCollection(Type type)
+        {
+            if (type == null)
+                return false;
+
+            if (type.IsArray)
+                return true;
+
+            Type collectionType = type.GetInterface("IEnumerable", true)
+                                  ?? type.GetInterface("IEnumerable`1", true);
+
+            return collectionType != null;
         }
     }
 }
