@@ -9,9 +9,30 @@ namespace WcfJsonFormatter.Exceptions
     /// 
     /// </summary>
     public class TypeUnresolvedException
-        : ServiceException
+        : ConfigServiceException
     {
         private readonly Type type;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        public TypeUnresolvedException(string message)
+            :base(message)
+        {
+            
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        public TypeUnresolvedException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+
+        }
 
         /// <summary>
         /// 

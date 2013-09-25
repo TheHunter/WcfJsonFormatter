@@ -28,8 +28,9 @@ namespace WcfJsonFormatter
             this.action = action;
             this.originalType = originalType;
             this.normalizer = normalizer;
-            //this.normalizedType = DynamicTypeRegister.NormalizeType(originalType);
             this.normalizedType = this.normalizer.Invoke(originalType);
+            if (this.normalizedType == null)
+                throw new TypeUnresolvedException("The service is not able to use the given object type for serializing / deserializing objects, in order for resolving this kind of problem, you must to use a serviceTypeRegister on *.config file", originalType);
         }
 
         /// <summary>
@@ -47,26 +48,5 @@ namespace WcfJsonFormatter
         /// </summary>
         public string Action { get { return this.action; } }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        internal static TypeUnresolvedException MakeGenericError(OperationInfo info)
-        {
-            return new TypeUnresolvedException("The service is not able to use the given object type for serializing / deserializing objects, in order for resolving this kind of problem, you must to use a serviceTypeRegister on file *.config", info.originalType);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="message"></param>
-        /// <param name="innerException"></param>
-        /// <returns></returns>
-        internal static ServiceOperationException MakeOperationException(OperationInfo info, string message, Exception innerException)
-        {
-            return new ServiceOperationException(message, info.action, innerException);
-        }
     }
 }

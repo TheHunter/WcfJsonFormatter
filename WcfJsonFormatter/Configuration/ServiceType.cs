@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using WcfJsonFormatter.Exceptions;
 
 namespace WcfJsonFormatter.Configuration
 {
@@ -11,6 +14,7 @@ namespace WcfJsonFormatter.Configuration
     public class ServiceType
         : ConfigServiceElement
     {
+        
         [ConfigurationProperty("name", IsRequired = true)]
         public string Name
         {

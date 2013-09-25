@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using WcfJsonFormatter.Exceptions;
 
 namespace WcfJsonFormatter.Configuration
 {
@@ -14,15 +15,11 @@ namespace WcfJsonFormatter.Configuration
     internal class ServiceTypeRegister
         : ConfigurationSection
     {
-
-        private readonly Assembly entryAssembly;
         private readonly HashSet<Assembly> assemblies;
         private readonly IList<string> errorMessages;
         private readonly HashSet<Type> knownTypes;
-
         private readonly Dictionary<Type, Type> concreteResolvers;
         private readonly Dictionary<Type, Type> undefinedResolvers;
-
         private List<ServiceType> serviceTypes;
         private List<ResolverType> resolverTypes;
 
@@ -40,28 +37,11 @@ namespace WcfJsonFormatter.Configuration
             this.undefinedResolvers.Add(typeof(IList<>), typeof(List<>));
             this.undefinedResolvers.Add(typeof(ICollection<>), typeof(Collection<>));
             this.undefinedResolvers.Add(typeof(IDictionary<,>), typeof(Dictionary<,>));
-
-            this.entryAssembly = Assembly.GetEntryAssembly();
-            if (entryAssembly != null)
-            {
-                AssemblyName[] ass = entryAssembly.GetReferencedAssemblies();
-                foreach (var assemblyName in ass)
-                {
-                    try
-                    {
-                        this.assemblies.Add(Assembly.Load(assemblyName));
-                    }
-                    catch (Exception ex)
-                    {
-                        errorMessages.Add(string.Format("AssemblyName: {0}, Error message: {1}", assemblyName.Name, ex.Message));
-                    }
-                }
-            }
         }
 
         [ConfigurationProperty("serviceTypes", IsDefaultCollection = false)]
         [ConfigurationCollection(typeof(ServiceTypeCollection<ServiceType>))]
-        public ServiceTypeCollection<ServiceType> ServiceTypeCollection
+        protected ServiceTypeCollection<ServiceType> ServiceTypeCollection
         {
             get { return (ServiceTypeCollection<ServiceType>)base["serviceTypes"]; }
         }
@@ -69,7 +49,7 @@ namespace WcfJsonFormatter.Configuration
 
         [ConfigurationProperty("resolverTypes", IsDefaultCollection = false)]
         [ConfigurationCollection(typeof(ServiceTypeCollection<ResolverType>))]
-        public ServiceTypeCollection<ResolverType> ResolverTypeCollection
+        protected ServiceTypeCollection<ResolverType> ResolverTypeCollection
         {
             get { return (ServiceTypeCollection<ResolverType>)base["resolverTypes"]; }
         }
@@ -78,7 +58,7 @@ namespace WcfJsonFormatter.Configuration
         /// 
         /// </summary>
         /// <param name="assembly"></param>
-        public void AddAssembly(Assembly assembly)
+        internal void AddAssembly(Assembly assembly)
         {
             if (!this.assemblies.Contains(assembly))
                 this.assemblies.Add(assembly);
@@ -98,7 +78,9 @@ namespace WcfJsonFormatter.Configuration
             RegisterResolverType();
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         private void RegisterServiceType()
         {
             foreach (ServiceType serviceType in serviceTypes)
@@ -114,9 +96,15 @@ namespace WcfJsonFormatter.Configuration
                 }
                 else
                 {
-                    Type type = entry.GetType(serviceType.Name, false, true);
-                    if (type != null)
+                    try
+                    {
+                        Type type = entry.GetType(serviceType.Name, true, true);
                         knownTypes.Add(type);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new TypeUnresolvedException(string.Format("The type indicated in config file wasn't loaded, name: {0}", serviceType.Name), ex);
+                    }
                 }
             }
         }
@@ -151,21 +139,31 @@ namespace WcfJsonFormatter.Configuration
         /// <returns></returns>
         private Assembly GetAssemblyFrom(ServiceType serviceType)
         {
-           Assembly ass = this.assemblies.FirstOrDefault(n => n.GetName().Name == serviceType.Assembly)
+            try
+            {
+                Assembly ass = this.assemblies.FirstOrDefault(n => n.GetName().Name == serviceType.Assembly)
                 ?? Assembly.Load(serviceType.Assembly);
 
-            assemblies.Add(ass);
-            return ass;
+                assemblies.Add(ass);
+                return ass;
+            }
+            catch (Exception ex)
+            {
+                throw new AssemblyUnresolvedException("Error on loading the assembly indicated in config section, see innerException for details", serviceType.Assembly, ex);
+            }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceType"></param>
+        /// <param name="binderType"></param>
         private void RegisterResolver(Type serviceType, Type binderType)
         {
             if (serviceType.IsGenericType)
             {
                 if (serviceType.IsGenericTypeDefinition)
                 {
-                    //this.undefinedResolvers.Add(serviceType, binderType);
                     if (!this.undefinedResolvers.Keys.Contains(serviceType))
                         this.undefinedResolvers.Add(serviceType, binderType);
                 }
@@ -204,6 +202,8 @@ namespace WcfJsonFormatter.Configuration
         internal Type TryToNormalize(Type type)
         {
             this.InspectType(type);
+
+            if (IsConcreteClass(type)) return type;
             
             Type ret = this.concreteResolvers.ContainsKey(type)
                             ? this.concreteResolvers[type]
@@ -211,7 +211,6 @@ namespace WcfJsonFormatter.Configuration
 
             if (ret == null && type.IsGenericType)
             {
-                //ret = this.undefinedResolvers[type];
                 KeyValuePair<Type, Type> pair = this.undefinedResolvers.FirstOrDefault(n => n.Key.Name == type.Name);
                 if (pair.Value != null && pair.Value.IsGenericTypeDefinition)
                 {
@@ -222,6 +221,10 @@ namespace WcfJsonFormatter.Configuration
             return ret;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
         private void InspectType(Type type)
         {
             if (type.IsGenericType && !type.IsGenericTypeDefinition)
@@ -233,13 +236,13 @@ namespace WcfJsonFormatter.Configuration
                 }
             }
 
-            if (!this.IsCollection(type))
+            if (!IsCollection(type))
             {
                 this.LoadType(type);
                 if (type.IsPrimitive)
                     return;
 
-                BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.GetProperty | BindingFlags.SetProperty;
+                const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.GetProperty | BindingFlags.SetProperty;
                 var properties = type.GetProperties(flags).Where(n => !knownTypes.Contains(n.PropertyType));
                 foreach (var property in properties)
                 {
@@ -272,8 +275,6 @@ namespace WcfJsonFormatter.Configuration
         /// <param name="type"></param>
         internal void LoadType(Type type)
         {
-            this.assemblies.Add(type.Assembly);
-
             if (type.IsGenericTypeDefinition)
                 return;
 
@@ -310,10 +311,9 @@ namespace WcfJsonFormatter.Configuration
         /// 
         /// </summary>
         /// <returns></returns>
-        internal bool RefreshRegister()
+        internal void RefreshRegister()
         {
             this.RegisterResolverType();
-            return resolverTypes.All(n => n.WasResolved);
         }
 
         /// <summary>
@@ -321,7 +321,7 @@ namespace WcfJsonFormatter.Configuration
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private bool IsConcreteClass(Type type)
+        private static bool IsConcreteClass(Type type)
         {
             if (type == null)
                 return false;
@@ -334,7 +334,7 @@ namespace WcfJsonFormatter.Configuration
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private bool IsCollection(Type type)
+        private static bool IsCollection(Type type)
         {
             if (type == null)
                 return false;

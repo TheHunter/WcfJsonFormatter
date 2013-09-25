@@ -29,16 +29,22 @@ namespace WcfJsonFormatter
         /// <param name="returnType"></param>
         protected MessageFormatter(string action, IEnumerable<ParameterInfo> parameters, Type returnType)
         {
-            this.action = action;
+            try
+            {
+                this.action = action;
+                this.operationParameters = new List<OperationParameter>
+                    (
+                        parameters.Select(n => new OperationParameter(n.Name, action, n.ParameterType, DynamicTypeRegister.NormalizeType))
+                    );
 
-            this.operationParameters = new List<OperationParameter>
-                (
-                    parameters.Select(n => new OperationParameter(n.Name, action, n.ParameterType, DynamicTypeRegister.NormalizeType))
-                );
-
-            this.operationResult = new OperationResult(action, returnType, DynamicTypeRegister.NormalizeType);
+                this.operationResult = new OperationResult(action, returnType, DynamicTypeRegister.NormalizeType);
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceOperationException("The service operation cannot be invoked because It has an invalid return object type, see innerException for details.", action, ex);
+            }
             
-            DynamicTypeRegister.RefreshServiceRegister();
+            //DynamicTypeRegister.RefreshServiceRegister();
         }
 
         /// <summary>

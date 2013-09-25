@@ -118,8 +118,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="db\SalesArea_log.ldf">
-      <DependentUpon>SalesArea.mdf</DependentUpon>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <DependentUpon>SalesArea.mdf</DependentUpon>
     </Content>
     <Content Include="libs\PersistentLayer.Domain.dll" />
     <Content Include="libs\PersistentLayer.Domain_.dll" />

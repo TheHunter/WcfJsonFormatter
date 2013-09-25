@@ -41,6 +41,7 @@ namespace WcfJsonFormatter
         /// <param name="objectType"></param>
         /// <param name="existingValue"></param>
         /// <param name="serializer"></param>
+        /// <exception cref="JsonSerializationException"></exception>
         /// <returns></returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
@@ -58,6 +59,7 @@ namespace WcfJsonFormatter
         /// <summary>
         /// 
         /// </summary>
+        /// <exception cref="JsonSerializationException"></exception>
         /// <returns></returns>
         private object MakeInstance()
         {
@@ -70,13 +72,14 @@ namespace WcfJsonFormatter
                 throw new JsonSerializationException(string.Format("Error on making object by the given type object, type: {0}", typeConverter.FullName), ex);
             }
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="writer"></param>
         /// <param name="value"></param>
         /// <param name="serializer"></param>
+        /// <exception cref="NotSupportedException"></exception>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             throw new NotSupportedException("JsonReaderConverter should only be used while deserializing.");

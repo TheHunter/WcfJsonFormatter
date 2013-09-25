@@ -70,8 +70,14 @@
     <Compile Include="..\WcfJsonFormatter\DynamicTypeRegister.cs">
       <Link>DynamicTypeRegister.cs</Link>
     </Compile>
-    <Compile Include="..\WcfJsonFormatter\Exceptions\ServiceException.cs">
-      <Link>Exceptions\ServiceException.cs</Link>
+    <Compile Include="..\WcfJsonFormatter\Exceptions\AssemblyUnresolvedException.cs">
+      <Link>Exceptions\AssemblyUnresolvedException.cs</Link>
+    </Compile>
+    <Compile Include="..\WcfJsonFormatter\Exceptions\ConfigServiceException.cs">
+      <Link>Exceptions\ConfigServiceException.cs</Link>
+    </Compile>
+    <Compile Include="..\WcfJsonFormatter\Exceptions\ResolverTypeException.cs">
+      <Link>Exceptions\ResolverTypeException.cs</Link>
     </Compile>
     <Compile Include="..\WcfJsonFormatter\Exceptions\ServiceOperationException.cs">
       <Link>Exceptions\ServiceOperationException.cs</Link>

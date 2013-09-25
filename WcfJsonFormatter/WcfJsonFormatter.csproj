@@ -55,7 +55,9 @@
     <Compile Include="Configuration\ResolverType.cs" />
     <Compile Include="CustomContractResolver.cs" />
     <Compile Include="DynamicTypeRegister.cs" />
-    <Compile Include="Exceptions\ServiceException.cs" />
+    <Compile Include="Exceptions\AssemblyUnresolvedException.cs" />
+    <Compile Include="Exceptions\ResolverTypeException.cs" />
+    <Compile Include="Exceptions\ConfigServiceException.cs" />
     <Compile Include="Exceptions\ServiceOperationException.cs" />
     <Compile Include="Exceptions\TypeUnresolvedException.cs" />
     <Compile Include="IMessageFormatter.cs" />

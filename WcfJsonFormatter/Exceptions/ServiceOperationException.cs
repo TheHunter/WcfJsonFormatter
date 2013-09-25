@@ -6,7 +6,7 @@ using System.Text;
 namespace WcfJsonFormatter.Exceptions
 {
     public class ServiceOperationException
-        : ServiceException
+        : ConfigServiceException
     {
         private readonly string operationName;
 

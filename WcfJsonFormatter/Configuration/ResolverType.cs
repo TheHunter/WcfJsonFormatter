@@ -4,6 +4,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
+using WcfJsonFormatter.Exceptions;
 
 namespace WcfJsonFormatter.Configuration
 {
@@ -36,10 +37,10 @@ namespace WcfJsonFormatter.Configuration
         {
             base.PostDeserialize();
             if (this.ServiceType.Name == "*")
-                throw new ArgumentException("The ServiceType property of ResolverType must contain a valid CLR type name to be resolved by binder type associated.");
+                throw new ResolverTypeException("The ServiceType property of ResolverType must contain a valid CLR type name to be resolved by binder type associated.");
 
             if (this.BinderType.Name == "*")
-                throw new ArgumentException("The BinderType property of ResolverType must contain a valid CLR type name to resolve the service type associated.");
+                throw new ResolverTypeException("The BinderType property of ResolverType must contain a valid CLR type name to resolve the service type associated.");
 
             this.wasResolved = false;
         }

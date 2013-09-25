@@ -35,7 +35,7 @@ namespace WcfJsonFormatter
         /// <returns></returns>
         private static IEnumerable<PropertyInfo> GetPropertyMembers(Type type)
         {
-            BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy;
+            const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy;
             return type.GetProperties(flags);
         }
 
