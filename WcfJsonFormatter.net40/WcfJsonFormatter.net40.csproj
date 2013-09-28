@@ -55,6 +55,9 @@
     <Compile Include="..\WcfJsonFormatter\Configuration\ResolverType.cs">
       <Link>Configuration\ResolverType.cs</Link>
     </Compile>
+    <Compile Include="..\WcfJsonFormatter\Configuration\SerializerSettings.cs">
+      <Link>Configuration\SerializerSettings.cs</Link>
+    </Compile>
     <Compile Include="..\WcfJsonFormatter\Configuration\ServiceType.cs">
       <Link>Configuration\ServiceType.cs</Link>
     </Compile>
@@ -90,6 +93,9 @@
     </Compile>
     <Compile Include="..\WcfJsonFormatter\IOperationInfo.cs">
       <Link>IOperationInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\WcfJsonFormatter\IServiceRegister.cs">
+      <Link>IServiceRegister.cs</Link>
     </Compile>
     <Compile Include="..\WcfJsonFormatter\JsonBinaryConverter.cs">
       <Link>JsonBinaryConverter.cs</Link>

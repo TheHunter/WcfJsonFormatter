@@ -21,7 +21,9 @@ namespace WcfJsonService.Example
             WcfHost host = new WcfHost();
             
             host.Initialize();
-            host.Run();
+            
+            //host.Run();
+            host.RunFromCfg();
         }
 
         private void Initialize()
@@ -44,24 +46,46 @@ namespace WcfJsonService.Example
 
         private void Run()
         {
+            Console.WriteLine("Run a ServiceHost via programmatic configuration...");
+            Console.WriteLine();
+
             string baseAddress = "http://" + Environment.MachineName + ":8000/Service.svc";
 
             using (ServiceHost serviceHost = new ServiceHost(typeof(SalesService), new Uri(baseAddress)))
-            //using (ServiceHost serviceHost = new ServiceHost(typeof(SalesService)))
             {
-                //
                 WebHttpBinding webBinding = new WebHttpBinding
-                    {
-                        ContentTypeMapper = new RawContentMapper(),
-                        MaxReceivedMessageSize = 4194304,
-                        MaxBufferSize = 4194304
-                    };
-                
+                {
+                    ContentTypeMapper = new RawContentMapper(),
+                    MaxReceivedMessageSize = 4194304,
+                    MaxBufferSize = 4194304
+                };
+
                 serviceHost.AddServiceEndpoint(typeof(ISalesService), webBinding, "json")
                     .Behaviors.Add(new WebHttpJsonBehavior());
 
                 serviceHost.AddServiceEndpoint(typeof(ISalesService), new BasicHttpBinding(), baseAddress);
 
+                serviceHost.AddDependencyInjectionBehavior<ISalesService>(AutofacHostFactory.Container);
+
+                Console.WriteLine("Opening the host");
+                serviceHost.Open();
+
+                Console.WriteLine("The service is ready.");
+                Console.WriteLine("Press <ENTER> to terminate service.");
+                Console.WriteLine();
+                Console.ReadLine();
+
+                serviceHost.Close();
+            }
+        }
+
+        private void RunFromCfg()
+        {
+            Console.WriteLine("Run a ServiceHost via administrative configuration...");
+            Console.WriteLine();
+
+            using (ServiceHost serviceHost = new ServiceHost(typeof(SalesService)))
+            {
                 serviceHost.AddDependencyInjectionBehavior<ISalesService>(AutofacHostFactory.Container);
 
                 Console.WriteLine("Opening the host");

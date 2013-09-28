@@ -29,8 +29,6 @@ namespace WcfJsonFormatter
             this.originalType = originalType;
             this.normalizer = normalizer;
             this.normalizedType = this.normalizer.Invoke(originalType);
-            if (this.normalizedType == null)
-                throw new TypeUnresolvedException("The service is not able to use the given object type for serializing / deserializing objects, in order for resolving this kind of problem, you must to use a serviceTypeRegister on *.config file", originalType);
         }
 
         /// <summary>

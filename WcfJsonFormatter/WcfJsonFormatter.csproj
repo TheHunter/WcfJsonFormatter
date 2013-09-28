@@ -49,18 +49,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ConfigServiceElement.cs" />
+    <Compile Include="Configuration\SerializerSettings.cs" />
     <Compile Include="Configuration\ServiceTypeCollection.cs" />
     <Compile Include="Configuration\ServiceType.cs" />
     <Compile Include="Configuration\ServiceTypeRegister.cs" />
     <Compile Include="Configuration\ResolverType.cs" />
     <Compile Include="CustomContractResolver.cs" />
-    <Compile Include="DynamicTypeRegister.cs" />
     <Compile Include="Exceptions\AssemblyUnresolvedException.cs" />
     <Compile Include="Exceptions\ResolverTypeException.cs" />
     <Compile Include="Exceptions\ConfigServiceException.cs" />
     <Compile Include="Exceptions\ServiceOperationException.cs" />
     <Compile Include="Exceptions\TypeUnresolvedException.cs" />
     <Compile Include="IMessageFormatter.cs" />
+    <Compile Include="IServiceRegister.cs" />
     <Compile Include="IOperationInfo.cs" />
     <Compile Include="JsonBinaryConverter.cs" />
     <Compile Include="JsonClientMessageFormatter.cs" />

@@ -19,17 +19,22 @@ namespace WcfJsonFormatter
     public class JsonDispatchMessageFormatter
         : MessageFormatter, IDispatchMessageFormatter
     {
-        
+
+        private readonly JsonBinaryConverter converter;
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="operation"></param>
-        public JsonDispatchMessageFormatter(OperationDescription operation)
+        /// <param name="converter"></param>
+        /// <param name="serviceRegister"></param>
+        public JsonDispatchMessageFormatter(OperationDescription operation, JsonBinaryConverter converter, IServiceRegister serviceRegister)
             : base (operation.Messages[1].Action,
                     operation.SyncMethod.GetParameters(),
-                    operation.SyncMethod.ReturnType)
+                    operation.SyncMethod.ReturnType,
+                    serviceRegister)
         {
-
+            this.converter = converter;
         }
 
         /// <summary>
@@ -55,7 +60,7 @@ namespace WcfJsonFormatter
             XmlDictionaryReader bodyReader = message.GetReaderAtBodyContents();
             bodyReader.ReadStartElement(RawBodyWriter.DefaultRootName);
 
-            JsonBinaryConverter.DeserializeRequest(bodyReader.ReadContentAsBase64(), this.OperationParameters, parameters);
+            converter.DeserializeRequest(bodyReader.ReadContentAsBase64(), this.OperationParameters, parameters);
         }
 
         /// <summary>
@@ -67,7 +72,7 @@ namespace WcfJsonFormatter
         /// <returns></returns>
         public Message SerializeReply(MessageVersion messageVersion, object[] parameters, object result)
         {
-            byte[] body = JsonBinaryConverter.SerializeReply(this.OperationResult, result);
+            byte[] body = converter.SerializeReply(this.OperationResult, result);
 
             Message replyMessage = Message.CreateMessage(messageVersion, this.Action, new RawBodyWriter(body));
             replyMessage.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(WebContentFormat.Raw));

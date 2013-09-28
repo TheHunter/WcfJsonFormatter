@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -65,7 +66,7 @@ namespace WcfJsonFormatter
         {
             try
             {
-                return Activator.CreateInstance(typeConverter);
+                return Activator.CreateInstance(typeConverter, true);
             }
             catch (Exception ex)
             {

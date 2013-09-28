@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel.Channels;
@@ -7,6 +8,8 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using System.Text;
+using WcfJsonFormatter.Configuration;
+using WcfJsonFormatter.Exceptions;
 
 namespace WcfJsonFormatter
 {
@@ -16,7 +19,30 @@ namespace WcfJsonFormatter
     public class WebHttpJsonBehavior
         : WebHttpBehavior
     {
-        
+
+        private readonly ServiceTypeRegister configRegister;
+        private readonly JsonBinaryConverter converter;
+
+        public WebHttpJsonBehavior()
+            : this(new List<Type>())
+        {
+            
+        }
+
+
+        public WebHttpJsonBehavior(IEnumerable<Type> knownTypes)
+        {
+            
+            // It must regsiter the service types..
+            this.configRegister = ConfigurationManager.GetSection("serviceTypeRegister") as ServiceTypeRegister
+                            ?? new ServiceTypeRegister();
+
+            if (knownTypes != null && knownTypes.Any())
+                this.configRegister.LoadTypes(knownTypes);
+            
+            this.converter = new JsonBinaryConverter(this.configRegister.SerializerConfig, this.configRegister);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -51,8 +77,8 @@ namespace WcfJsonFormatter
             if (operationDescription.Messages[0].Body.Parts.Count == 0)
                 // nothing in the body, still use the default
                 return base.GetRequestDispatchFormatter(operationDescription, endpoint);
-            
-            return new JsonDispatchMessageFormatter(operationDescription);
+
+            return new JsonDispatchMessageFormatter(operationDescription, this.converter, this.configRegister);
         }
 
         /// <summary>
@@ -67,7 +93,7 @@ namespace WcfJsonFormatter
                 operationDescription.Messages[1].Body.ReturnValue.Type == typeof(void))
                 return base.GetReplyDispatchFormatter(operationDescription, endpoint);
 
-            return new JsonDispatchMessageFormatter(operationDescription);
+            return new JsonDispatchMessageFormatter(operationDescription, this.converter, this.configRegister);
         }
 
         /// <summary>
@@ -90,7 +116,7 @@ namespace WcfJsonFormatter
                 // nothing in the body, still use the default
                 return base.GetRequestClientFormatter(operationDescription, endpoint);
 
-            return new JsonClientMessageFormatter(operationDescription, endpoint);
+            return new JsonClientMessageFormatter(operationDescription, endpoint, this.converter, this.configRegister);
         }
 
         /// <summary>
@@ -105,7 +131,7 @@ namespace WcfJsonFormatter
                 operationDescription.Messages[1].Body.ReturnValue.Type == typeof(void))
                 return base.GetReplyClientFormatter(operationDescription, endpoint);
 
-            return new JsonClientMessageFormatter(operationDescription, endpoint);
+            return new JsonClientMessageFormatter(operationDescription, endpoint, this.converter, this.configRegister);
         }
 
         /// <summary>

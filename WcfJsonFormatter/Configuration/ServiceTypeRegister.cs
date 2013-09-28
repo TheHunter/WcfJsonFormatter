@@ -12,22 +12,21 @@ namespace WcfJsonFormatter.Configuration
     /// <summary>
     /// 
     /// </summary>
-    internal class ServiceTypeRegister
-        : ConfigurationSection
+    public class ServiceTypeRegister
+        : ConfigurationSection, IServiceRegister
     {
         private readonly HashSet<Assembly> assemblies;
-        private readonly IList<string> errorMessages;
         private readonly HashSet<Type> knownTypes;
         private readonly Dictionary<Type, Type> concreteResolvers;
         private readonly Dictionary<Type, Type> undefinedResolvers;
         private List<ServiceType> serviceTypes;
         private List<ResolverType> resolverTypes;
+        private SerializerSettings serializerConfig;
 
 
         public ServiceTypeRegister()
         {
             this.assemblies = new HashSet<Assembly>();
-            this.errorMessages = new List<string>();
             this.knownTypes = new HashSet<Type>();
 
             this.concreteResolvers = new Dictionary<Type, Type>();
@@ -37,6 +36,13 @@ namespace WcfJsonFormatter.Configuration
             this.undefinedResolvers.Add(typeof(IList<>), typeof(List<>));
             this.undefinedResolvers.Add(typeof(ICollection<>), typeof(Collection<>));
             this.undefinedResolvers.Add(typeof(IDictionary<,>), typeof(Dictionary<,>));
+        }
+
+
+        [ConfigurationProperty("serializer", IsRequired = false, DefaultValue = null)]
+        protected SerializerSettings Serializer
+        {
+            get { return (SerializerSettings)base["serializer"]; }
         }
 
         [ConfigurationProperty("serviceTypes", IsDefaultCollection = false)]
@@ -54,14 +60,10 @@ namespace WcfJsonFormatter.Configuration
             get { return (ServiceTypeCollection<ResolverType>)base["resolverTypes"]; }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="assembly"></param>
-        internal void AddAssembly(Assembly assembly)
+        [ConfigurationProperty("checkOperationTypes", IsRequired = false, DefaultValue = false)]
+        public bool CheckOperationTypes
         {
-            if (!this.assemblies.Contains(assembly))
-                this.assemblies.Add(assembly);
+            get { return (bool)base["checkOperationTypes"]; }
         }
 
         /// <summary>
@@ -73,9 +75,28 @@ namespace WcfJsonFormatter.Configuration
 
             serviceTypes = new List<ServiceType>(this.ServiceTypeCollection.Cast<ServiceType>());
             resolverTypes = new List<ResolverType>(this.ResolverTypeCollection.Cast<ResolverType>());
+            serializerConfig = this.Serializer ?? new SerializerSettings();
 
             RegisterServiceType();
             RegisterResolverType();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public SerializerSettings SerializerConfig
+        {
+            get { return this.serializerConfig; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="assembly"></param>
+        internal void AddAssembly(Assembly assembly)
+        {
+            if (!this.assemblies.Contains(assembly))
+                this.assemblies.Add(assembly);
         }
 
         /// <summary>
@@ -199,7 +220,7 @@ namespace WcfJsonFormatter.Configuration
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        internal Type TryToNormalize(Type type)
+        public Type TryToNormalize(Type type)
         {
             this.InspectType(type);
 
@@ -305,6 +326,23 @@ namespace WcfJsonFormatter.Configuration
                 this.knownTypes.Add(type);
             }
             this.assemblies.Add(assembly);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="isFullname"></param>
+        /// <returns></returns>
+        public Type GetTypeByName(string name, bool isFullname)
+        {
+            if (name == null)
+                return null;
+
+            return isFullname
+                       ? this.knownTypes.FirstOrDefault(n => n.FullName.Equals(name))
+                       : this.knownTypes.FirstOrDefault(n => n.Name.Equals(name));
+
         }
 
         /// <summary>

@@ -25,22 +25,21 @@ namespace WcfJsonFormatter
         : MessageFormatter, IClientMessageFormatter
     {
         private readonly Uri operationUri;
+        private readonly JsonBinaryConverter converter;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="operation"></param>
-        /// <param name="endpoint"></param>
-        public JsonClientMessageFormatter(OperationDescription operation, ServiceEndpoint endpoint)
+
+        public JsonClientMessageFormatter(OperationDescription operation, ServiceEndpoint endpoint, JsonBinaryConverter converter, IServiceRegister serviceRegister)
             : base (operation.Messages[0].Action,
                     operation.SyncMethod.GetParameters(),
-                    operation.SyncMethod.ReturnType)
+                    operation.SyncMethod.ReturnType,
+                    serviceRegister)
         {
             string endpointAddress = endpoint.Address.Uri.ToString();
             if (!endpointAddress.EndsWith("/"))
                 endpointAddress = endpointAddress + "/";
 
             this.operationUri = new Uri(endpointAddress + operation.Name);
+            this.converter = converter;
         }
 
         /// <summary>
@@ -51,7 +50,7 @@ namespace WcfJsonFormatter
         /// <returns></returns>
         public Message SerializeRequest(MessageVersion messageVersion, object[] parameters)
         {
-            byte[] body = JsonBinaryConverter.SerializeRequest(this.OperationParameters, parameters);
+            byte[] body = converter.SerializeRequest(this.OperationParameters, parameters);
             
             Message requestMessage = Message.CreateMessage(messageVersion, this.Action, new RawBodyWriter(body));
             requestMessage.Headers.To = operationUri;
@@ -84,7 +83,7 @@ namespace WcfJsonFormatter
             XmlDictionaryReader bodyReader = message.GetReaderAtBodyContents();
 
             bodyReader.ReadStartElement(RawBodyWriter.DefaultRootName);
-            return JsonBinaryConverter.DeserializeReply(bodyReader.ReadContentAsBase64(), this.OperationResult);
+            return converter.DeserializeReply(bodyReader.ReadContentAsBase64(), this.OperationResult);
 
         }
     }

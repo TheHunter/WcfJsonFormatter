@@ -14,6 +14,14 @@ namespace WcfJsonFormatter
         //: SerializationBinder, Newtonsoft.Json.Serialization.ISerializationBinder
     {
 
+        private readonly IServiceRegister serviceRegister;
+
+
+        internal OperationTypeBinder(IServiceRegister serviceRegister)
+        {
+            this.serviceRegister = serviceRegister;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -22,7 +30,7 @@ namespace WcfJsonFormatter
         /// <returns></returns>
         public override Type BindToType(string assemblyName, string typeName)
         {
-            return DynamicTypeRegister.GetTypeByShortName(typeName);
+            return serviceRegister.GetTypeByName(typeName, false);
         }
 
 

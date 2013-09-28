@@ -16,16 +16,19 @@ namespace WcfJsonFormatter
         : DefaultContractResolver
     {
         private readonly bool includeFields;
+        private readonly IServiceRegister serviceRegister;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="shareCache"></param>
         /// <param name="includeFields"></param>
-        public CustomContractResolver(bool shareCache, bool includeFields)
+        /// <param name="serviceRegister"></param>
+        public CustomContractResolver(bool shareCache, bool includeFields, IServiceRegister serviceRegister)
             : base(shareCache)
         {
             this.includeFields = includeFields;
+            this.serviceRegister = serviceRegister;
         }
 
         /// <summary>
@@ -55,7 +58,7 @@ namespace WcfJsonFormatter
                 
                 foreach (var property in properties)
                 {
-                    Type normalized = DynamicTypeRegister.NormalizeType(property.PropertyType);
+                    Type normalized = serviceRegister.TryToNormalize(property.PropertyType);
                     if (normalized != null && normalized != property.PropertyType)
                         property.MemberConverter = new JsonReaderConverter(normalized);
                 }

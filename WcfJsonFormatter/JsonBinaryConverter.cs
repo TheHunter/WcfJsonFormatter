@@ -9,34 +9,44 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using WcfJsonFormatter.Configuration;
 
 namespace WcfJsonFormatter
 {
     /// <summary>
     /// 
     /// </summary>
-    public static class JsonBinaryConverter
+    public class JsonBinaryConverter
     {
-        private static readonly OperationTypeBinder Binder;
-        private static readonly JsonSerializer Serializer;
+        private readonly JsonSerializer Serializer;
+        private readonly IServiceRegister serviceRegister;
 
-        static JsonBinaryConverter()
+
+        internal JsonBinaryConverter(SerializerSettings serializerInfo, IServiceRegister serviceRegister)
         {
-            Binder = new OperationTypeBinder();
-            CustomContractResolver resolver = new CustomContractResolver(true, false)
+            this.serviceRegister = serviceRegister;
+
+            CustomContractResolver resolver = new CustomContractResolver(true, false, serviceRegister)
                 {
                     DefaultMembersSearchFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public
                 };
 
             Serializer = new JsonSerializer
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    TypeNameHandling = TypeNameHandling.None,
+                    ContractResolver = resolver
+                };
+
+            if (!serializerInfo.OnlyPublicConstructor)
+                Serializer.ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor;
+
+            if (serializerInfo.EnablePolymorphicMembers)
             {
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                NullValueHandling = NullValueHandling.Ignore,
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.Objects,
-                ContractResolver = resolver,
-                Binder = Binder
-            };
+                Serializer.Binder = new OperationTypeBinder(serviceRegister);
+                Serializer.TypeNameHandling = TypeNameHandling.Objects;
+            }
         }
 
         #region Wcf client usage
@@ -47,7 +57,7 @@ namespace WcfJsonFormatter
         /// <param name="methodParameters"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        internal static byte[] SerializeRequest(IEnumerable<OperationParameter> methodParameters, object[] parameters)
+        internal byte[] SerializeRequest(IEnumerable<OperationParameter> methodParameters, object[] parameters)
         {
             byte[] body;
             using (MemoryStream ms = new MemoryStream())
@@ -90,7 +100,7 @@ namespace WcfJsonFormatter
         /// <param name="body"></param>
         /// <param name="returnType"></param>
         /// <returns></returns>
-        internal static object DeserializeReply(byte[] body, OperationResult returnType)
+        internal object DeserializeReply(byte[] body, OperationResult returnType)
         {
             using (MemoryStream ms = new MemoryStream(body))
             {
@@ -99,7 +109,7 @@ namespace WcfJsonFormatter
                     using (JsonReader reader = new JsonTextReader(sr))
                     {
                         JToken token = Serializer.Deserialize<JToken>(reader);
-                        Type type = DynamicTypeRegister.GetTypeByShortName(JTokenToDeserialize(token))
+                        Type type = serviceRegister.GetTypeByName(JTokenToDeserialize(token), false)
                                     ?? returnType.NormalizedType;
 
                         object ret = token.ToObject(type, Serializer);
@@ -119,7 +129,7 @@ namespace WcfJsonFormatter
         /// <param name="body"></param>
         /// <param name="methodParameters"></param>
         /// <param name="parameters"></param>
-        internal static void DeserializeRequest(byte[] body, IEnumerable<OperationParameter> methodParameters, object[] parameters)
+        internal void DeserializeRequest(byte[] body, IEnumerable<OperationParameter> methodParameters, object[] parameters)
         {
             using (MemoryStream ms = new MemoryStream(body))
             {
@@ -135,7 +145,7 @@ namespace WcfJsonFormatter
                             JProperty property = wrappedParameters.Property(parameter.Name);
                             if (property != null)
                             {
-                                Type type = DynamicTypeRegister.GetTypeByShortName(JTokenToDeserialize(property.Value))
+                                Type type = serviceRegister.GetTypeByName(JTokenToDeserialize(property.Value), false)
                                             ?? parameter.NormalizedType;
 
                                 // NOTA: se l'oggetto type non fosse nullo, viene sempre richiamato il binder
@@ -155,7 +165,7 @@ namespace WcfJsonFormatter
         /// <param name="returnType"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        internal static byte[] SerializeReply(OperationResult returnType, object result)
+        internal byte[] SerializeReply(OperationResult returnType, object result)
         {
             byte[] body;
             using (MemoryStream ms = new MemoryStream())

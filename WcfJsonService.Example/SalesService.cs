@@ -10,7 +10,7 @@ using PersistentLayer.NHibernate.WCF;
 namespace WcfJsonService.Example
 {
     [NhServiceBehavior("DefaultSessionFactory", typeof(WcfServiceHolder))]
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, IncludeExceptionDetailInFaults = true)]
     public class SalesService
         : ISalesService
     {
