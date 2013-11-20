@@ -294,7 +294,7 @@ namespace WcfJsonFormatter.Configuration
         /// 
         /// </summary>
         /// <param name="type"></param>
-        internal void LoadType(Type type)
+        public void LoadType(Type type)
         {
             if (type.IsGenericTypeDefinition)
                 return;
@@ -306,7 +306,7 @@ namespace WcfJsonFormatter.Configuration
         /// 
         /// </summary>
         /// <param name="types"></param>
-        internal void LoadTypes(IEnumerable<Type> types)
+        public void LoadTypes(IEnumerable<Type> types)
         {
             foreach (var type in types)
             {
@@ -318,7 +318,7 @@ namespace WcfJsonFormatter.Configuration
         /// 
         /// </summary>
         /// <param name="assembly"></param>
-        internal void LoadTypes(Assembly assembly)
+        public void LoadTypes(Assembly assembly)
         {
             var types = assembly.GetTypes();
             foreach (var type in types)

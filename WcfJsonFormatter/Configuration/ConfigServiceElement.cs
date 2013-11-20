@@ -6,9 +6,15 @@ using System.Text;
 
 namespace WcfJsonFormatter.Configuration
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public abstract class ConfigServiceElement
         : ConfigurationElement
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public abstract object Key { get; }
     }
 }

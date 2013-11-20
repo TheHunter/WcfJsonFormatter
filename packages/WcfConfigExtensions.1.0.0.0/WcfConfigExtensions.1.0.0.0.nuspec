@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>WcfConfigExtensions</id>
+    <version>1.0.0.0</version>
+    <title>WcfConfigExtensions</title>
+    <authors>TheHunter</authors>
+    <owners>TheHunter</owners>
+    <licenseUrl>https://raw.github.com/TheHunter/WcfExtensions/master/lgpl.txt</licenseUrl>
+    <projectUrl>https://github.com/TheHunter/WcfExtensions.git</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>WcfExtensions is a basic library which serves for configuring custom behaviors for wcf services, and finally this is possible by using a default class which derives from BehaviorExtensionElement, allowing to avoid a local implementation of BehaviorExtensionElement on wcf service project.</description>
+    <summary>WcfExtensions is a basic library which serves for configuring custom behaviors for wcf services.</summary>
+    <releaseNotes />
+    <copyright />
+    <language />
+    <tags>WCF Web service</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.ServiceModel" targetFramework="" />
+      <frameworkAssembly assemblyName="System.Configuration" targetFramework="" />
+    </frameworkAssemblies>
+  </metadata>
+</package>

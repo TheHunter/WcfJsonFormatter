@@ -32,9 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -49,6 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\WcfJsonFormatter\BinaryRawBodyWriter.cs">
+      <Link>BinaryRawBodyWriter.cs</Link>
+    </Compile>
     <Compile Include="..\WcfJsonFormatter\Configuration\ConfigServiceElement.cs">
       <Link>Configuration\ConfigServiceElement.cs</Link>
     </Compile>
@@ -67,12 +67,6 @@
     <Compile Include="..\WcfJsonFormatter\Configuration\ServiceTypeRegister.cs">
       <Link>Configuration\ServiceTypeRegister.cs</Link>
     </Compile>
-    <Compile Include="..\WcfJsonFormatter\CustomContractResolver.cs">
-      <Link>CustomContractResolver.cs</Link>
-    </Compile>
-    <Compile Include="..\WcfJsonFormatter\DynamicTypeRegister.cs">
-      <Link>DynamicTypeRegister.cs</Link>
-    </Compile>
     <Compile Include="..\WcfJsonFormatter\Exceptions\AssemblyUnresolvedException.cs">
       <Link>Exceptions\AssemblyUnresolvedException.cs</Link>
     </Compile>
@@ -88,8 +82,23 @@
     <Compile Include="..\WcfJsonFormatter\Exceptions\TypeUnresolvedException.cs">
       <Link>Exceptions\TypeUnresolvedException.cs</Link>
     </Compile>
-    <Compile Include="..\WcfJsonFormatter\IMessageFormatter.cs">
-      <Link>IMessageFormatter.cs</Link>
+    <Compile Include="..\WcfJsonFormatter\Formatters\ClientJsonMessageFormatter.cs">
+      <Link>Formatters\ClientJsonMessageFormatter.cs</Link>
+    </Compile>
+    <Compile Include="..\WcfJsonFormatter\Formatters\DispatchJsonMessageFormatter.cs">
+      <Link>Formatters\DispatchJsonMessageFormatter.cs</Link>
+    </Compile>
+    <Compile Include="..\WcfJsonFormatter\Formatters\IClientJsonMessageFormatter.cs">
+      <Link>Formatters\IClientJsonMessageFormatter.cs</Link>
+    </Compile>
+    <Compile Include="..\WcfJsonFormatter\Formatters\IDispatchJsonMessageFormatter.cs">
+      <Link>Formatters\IDispatchJsonMessageFormatter.cs</Link>
+    </Compile>
+    <Compile Include="..\WcfJsonFormatter\Formatters\IMessageFormatter.cs">
+      <Link>Formatters\IMessageFormatter.cs</Link>
+    </Compile>
+    <Compile Include="..\WcfJsonFormatter\Formatters\MessageFormatter.cs">
+      <Link>Formatters\MessageFormatter.cs</Link>
     </Compile>
     <Compile Include="..\WcfJsonFormatter\IOperationInfo.cs">
       <Link>IOperationInfo.cs</Link>
@@ -97,23 +106,14 @@
     <Compile Include="..\WcfJsonFormatter\IServiceRegister.cs">
       <Link>IServiceRegister.cs</Link>
     </Compile>
-    <Compile Include="..\WcfJsonFormatter\JsonBinaryConverter.cs">
-      <Link>JsonBinaryConverter.cs</Link>
-    </Compile>
-    <Compile Include="..\WcfJsonFormatter\JsonClientMessageFormatter.cs">
-      <Link>JsonClientMessageFormatter.cs</Link>
-    </Compile>
-    <Compile Include="..\WcfJsonFormatter\JsonDispatchMessageFormatter.cs">
-      <Link>JsonDispatchMessageFormatter.cs</Link>
-    </Compile>
-    <Compile Include="..\WcfJsonFormatter\JsonReaderConverter.cs">
-      <Link>JsonReaderConverter.cs</Link>
-    </Compile>
-    <Compile Include="..\WcfJsonFormatter\MessageFormatter.cs">
-      <Link>MessageFormatter.cs</Link>
+    <Compile Include="..\WcfJsonFormatter\IWebHttpJsonBehavior.cs">
+      <Link>IWebHttpJsonBehavior.cs</Link>
     </Compile>
     <Compile Include="..\WcfJsonFormatter\OperationInfo.cs">
       <Link>OperationInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\WcfJsonFormatter\OperationInfoType.cs">
+      <Link>OperationInfoType.cs</Link>
     </Compile>
     <Compile Include="..\WcfJsonFormatter\OperationParameter.cs">
       <Link>OperationParameter.cs</Link>
@@ -124,25 +124,13 @@
     <Compile Include="..\WcfJsonFormatter\OperationTypeBinder.cs">
       <Link>OperationTypeBinder.cs</Link>
     </Compile>
-    <Compile Include="..\WcfJsonFormatter\RawBodyWriter.cs">
-      <Link>RawBodyWriter.cs</Link>
-    </Compile>
     <Compile Include="..\WcfJsonFormatter\RawContentMapper.cs">
       <Link>RawContentMapper.cs</Link>
-    </Compile>
-    <Compile Include="..\WcfJsonFormatter\WebHttpJsonBehavior.cs">
-      <Link>WebHttpJsonBehavior.cs</Link>
-    </Compile>
-    <Compile Include="..\WcfJsonFormatter\WebHttpJsonBehaviorElement.cs">
-      <Link>WebHttpJsonBehaviorElement.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

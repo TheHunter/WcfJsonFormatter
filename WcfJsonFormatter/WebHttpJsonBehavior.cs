@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Reflection;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
@@ -10,37 +9,132 @@ using System.ServiceModel.Web;
 using System.Text;
 using WcfJsonFormatter.Configuration;
 using WcfJsonFormatter.Exceptions;
+using WcfJsonFormatter.Formatters;
 
 namespace WcfJsonFormatter
 {
     /// <summary>
     /// 
     /// </summary>
-    public class WebHttpJsonBehavior
-        : WebHttpBehavior
+    public abstract class WebHttpJsonBehavior
+        : WebHttpBehavior, IWebHttpJsonBehavior
     {
-
         private readonly ServiceTypeRegister configRegister;
-        private readonly JsonBinaryConverter converter;
 
-        public WebHttpJsonBehavior()
-            : this(new List<Type>())
+        /// <summary>
+        /// 
+        /// </summary>
+        protected WebHttpJsonBehavior()
+            :this(new List<Type>())
         {
             
         }
 
-
-        public WebHttpJsonBehavior(IEnumerable<Type> knownTypes)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="knownTypes"></param>
+        protected WebHttpJsonBehavior(IEnumerable<Type> knownTypes)
         {
-            
-            // It must regsiter the service types..
             this.configRegister = ConfigurationManager.GetSection("serviceTypeRegister") as ServiceTypeRegister
                             ?? new ServiceTypeRegister();
 
             if (knownTypes != null && knownTypes.Any())
                 this.configRegister.LoadTypes(knownTypes);
-            
-            this.converter = new JsonBinaryConverter(this.configRegister.SerializerConfig, this.configRegister);
+
+        }
+
+
+        protected override IDispatchMessageFormatter GetRequestDispatchFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
+        {
+            if (this.IsGetOperation(operationDescription))
+                // no change for GET operations
+                return base.GetRequestDispatchFormatter(operationDescription, endpoint);
+
+            if (operationDescription.Messages[0].Body.Parts.Count == 0)
+                // nothing in the body, still use the default
+                return base.GetRequestDispatchFormatter(operationDescription, endpoint);
+
+            return this.GetDispatchFormatter(operationDescription, endpoint);
+        }
+
+
+        protected override IDispatchMessageFormatter GetReplyDispatchFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
+        {
+            if (operationDescription.Messages.Count == 1 ||
+                operationDescription.Messages[1].Body.ReturnValue.Type == typeof(void))
+                return base.GetReplyDispatchFormatter(operationDescription, endpoint);
+
+            return this.GetDispatchFormatter(operationDescription, endpoint);
+        }
+
+
+        protected override IClientMessageFormatter GetRequestClientFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
+        {
+            if (operationDescription.Behaviors.Find<WebGetAttribute>() != null)
+                // no change for GET operations
+                return base.GetRequestClientFormatter(operationDescription, endpoint);
+
+            WebInvokeAttribute wia = operationDescription.Behaviors.Find<WebInvokeAttribute>();
+            if (wia != null && wia.Method == "HEAD")
+                return base.GetRequestClientFormatter(operationDescription, endpoint);
+
+            if (operationDescription.Messages[0].Body.Parts.Count == 0)
+                // nothing in the body, still use the default
+                return base.GetRequestClientFormatter(operationDescription, endpoint);
+
+            return GetClientFormatter(operationDescription, endpoint);
+
+        }
+
+
+        protected override IClientMessageFormatter GetReplyClientFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
+        {
+            if (operationDescription.Messages.Count == 1 ||
+                operationDescription.Messages[1].Body.ReturnValue.Type == typeof(void))
+                return base.GetReplyClientFormatter(operationDescription, endpoint);
+
+            return GetClientFormatter(operationDescription, endpoint);
+        }
+
+
+        public abstract IDispatchJsonMessageFormatter MakeDispatchMessageFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint);
+
+
+        public abstract IClientJsonMessageFormatter MakeClientMessageFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint);
+
+
+        private IClientJsonMessageFormatter GetClientFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
+        {
+            try
+            {
+                return this.MakeClientMessageFormatter(operationDescription, endpoint);
+            }
+            catch (NullMessageFormatterException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new ConfigServiceException("Error on getting the IClientJsonMessageFormatter instance for service operation, see innerException for details.", ex);
+            }
+        }
+
+
+        private IDispatchJsonMessageFormatter GetDispatchFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
+        {
+            try
+            {
+                return this.MakeDispatchMessageFormatter(operationDescription, endpoint);
+            }
+            catch (NullMessageFormatterException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new ConfigServiceException("Error on getting the IDispatchJsonMessageFormatter instance for service operation, see innerException for details.", ex);
+            }
         }
 
         /// <summary>
@@ -60,78 +154,6 @@ namespace WcfJsonFormatter
             {
                 this.ValidateOperation(operation);
             }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="operationDescription"></param>
-        /// <param name="endpoint"></param>
-        /// <returns></returns>
-        protected override IDispatchMessageFormatter GetRequestDispatchFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
-        {
-            if (this.IsGetOperation(operationDescription))
-                // no change for GET operations
-                return base.GetRequestDispatchFormatter(operationDescription, endpoint);
-
-            if (operationDescription.Messages[0].Body.Parts.Count == 0)
-                // nothing in the body, still use the default
-                return base.GetRequestDispatchFormatter(operationDescription, endpoint);
-
-            return new JsonDispatchMessageFormatter(operationDescription, this.converter, this.configRegister);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="operationDescription"></param>
-        /// <param name="endpoint"></param>
-        /// <returns></returns>
-        protected override IDispatchMessageFormatter GetReplyDispatchFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
-        {
-            if (operationDescription.Messages.Count == 1 ||
-                operationDescription.Messages[1].Body.ReturnValue.Type == typeof(void))
-                return base.GetReplyDispatchFormatter(operationDescription, endpoint);
-
-            return new JsonDispatchMessageFormatter(operationDescription, this.converter, this.configRegister);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="operationDescription"></param>
-        /// <param name="endpoint"></param>
-        /// <returns></returns>
-        protected override IClientMessageFormatter GetRequestClientFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
-        {
-            if (operationDescription.Behaviors.Find<WebGetAttribute>() != null)
-                // no change for GET operations
-                return base.GetRequestClientFormatter(operationDescription, endpoint);
-
-            WebInvokeAttribute wia = operationDescription.Behaviors.Find<WebInvokeAttribute>();
-            if (wia != null && wia.Method == "HEAD")
-                return base.GetRequestClientFormatter(operationDescription, endpoint);
-
-            if (operationDescription.Messages[0].Body.Parts.Count == 0)
-                // nothing in the body, still use the default
-                return base.GetRequestClientFormatter(operationDescription, endpoint);
-
-            return new JsonClientMessageFormatter(operationDescription, endpoint, this.converter, this.configRegister);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="operationDescription"></param>
-        /// <param name="endpoint"></param>
-        /// <returns></returns>
-        protected override IClientMessageFormatter GetReplyClientFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
-        {
-            if (operationDescription.Messages.Count == 1 ||
-                operationDescription.Messages[1].Body.ReturnValue.Type == typeof(void))
-                return base.GetReplyClientFormatter(operationDescription, endpoint);
-
-            return new JsonClientMessageFormatter(operationDescription, endpoint, this.converter, this.configRegister);
         }
 
         /// <summary>

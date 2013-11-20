@@ -50,29 +50,28 @@
     <StartupObject>WcfJsonService.Example.WcfHost</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac">
-      <HintPath>..\packages\Autofac.3.0.2\lib\net40\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="Autofac.Configuration">
-      <HintPath>..\packages\Autofac.3.0.2\lib\net40\Autofac.Configuration.dll</HintPath>
+    <Reference Include="Autofac, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Autofac.3.1.1\lib\net40\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Autofac.Integration.Wcf">
       <HintPath>..\packages\Autofac.Wcf.3.0.0\lib\net40\Autofac.Integration.Wcf.dll</HintPath>
     </Reference>
-    <Reference Include="EntityModel">
-      <HintPath>..\packages\EntityModel.1.5.0.15\lib\net40\EntityModel.dll</HintPath>
+    <Reference Include="EntityModel, Version=1.5.4.16, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityModel.1.5.4.16\lib\net40\EntityModel.dll</HintPath>
     </Reference>
-    <Reference Include="FluentNHibernate">
-      <HintPath>..\packages\FluentNHibernate.1.3.0.733\lib\FluentNHibernate.dll</HintPath>
+    <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="Iesi.Collections">
-      <HintPath>..\packages\Iesi.Collections.3.3.3.4001\lib\Net35\Iesi.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="NHibernate">
+    <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="PersistentLayer">
-      <HintPath>..\packages\PersistentLayer.3.3.3.15\lib\net40\PersistentLayer.dll</HintPath>
+    <Reference Include="PersistentLayer, Version=3.4.4.15, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\PersistentLayer.3.4.4.15\lib\net40\PersistentLayer.dll</HintPath>
     </Reference>
     <Reference Include="PersistentLayer.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -89,6 +88,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WcfExtensions">
+      <HintPath>..\packages\WcfConfigExtensions.1.0.0.0\lib\net40\WcfExtensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ISalesService.cs" />
@@ -123,8 +125,15 @@
     </Content>
     <Content Include="libs\PersistentLayer.Domain.dll" />
     <Content Include="libs\PersistentLayer.Domain_.dll" />
+    <Content Include="PersistentLayer.license.txt" />
+    <Content Include="PersistentLayer.readme.html" />
+    <Content Include="Release_3-4-4-15.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\WcfJsonNetFormatter\WcfJsonNetFormatter\WcfJsonNetFormatter.csproj">
+      <Project>{27dc70d0-42f6-44b7-bd02-2f2f834cc713}</Project>
+      <Name>WcfJsonNetFormatter</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WcfJsonFormatter\WcfJsonFormatter.csproj">
       <Project>{A488872B-9D9B-46A2-B0BE-DF14EB3AEB7D}</Project>
       <Name>WcfJsonFormatter</Name>

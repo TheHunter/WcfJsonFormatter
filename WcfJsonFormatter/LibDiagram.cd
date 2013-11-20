@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="WcfJsonFormatter.Formatters.ClientJsonMessageFormatter" BaseTypeListCollapsed="true">
+    <Position X="3.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABEAAAAAAAAAAAAAAICAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Formatters\ClientJsonMessageFormatter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WcfJsonFormatter.Formatters.DispatchJsonMessageFormatter" BaseTypeListCollapsed="true">
+    <Position X="6" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAAQCAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Formatters\DispatchJsonMessageFormatter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WcfJsonFormatter.Formatters.MessageFormatter">
+    <Position X="4.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAABAAAAAAAAAEAAgAAAAAAAAAAAIEAAACAAAAAAAQ=</HashCode>
+      <FileName>Formatters\MessageFormatter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WcfJsonFormatter.OperationInfo">
+    <Position X="11.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAQAgAAAAIAAAAAAAAAICAAAAAAADAAAAAAAQ=</HashCode>
+      <FileName>OperationInfo.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WcfJsonFormatter.OperationParameter">
+    <Position X="13.25" Y="15.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>OperationParameter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WcfJsonFormatter.OperationResult">
+    <Position X="10.5" Y="15.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>OperationResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WcfJsonFormatter.OperationTypeBinder" BaseTypeListCollapsed="true">
+    <Position X="15" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAIAACAAAAAAAA=</HashCode>
+      <FileName>OperationTypeBinder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WcfJsonFormatter.BinaryRawBodyWriter">
+    <Position X="11.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAACAAAAAAAABBAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>BinaryRawBodyWriter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WcfJsonFormatter.RawContentMapper">
+    <Position X="2.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>RawContentMapper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WcfJsonFormatter.Exceptions.AssemblyUnresolvedException">
+    <Position X="11.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\AssemblyUnresolvedException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WcfJsonFormatter.Exceptions.ConfigServiceException">
+    <Position X="15" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\ConfigServiceException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WcfJsonFormatter.Exceptions.ResolverTypeException">
+    <Position X="18.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\ResolverTypeException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WcfJsonFormatter.Exceptions.ServiceOperationException">
+    <Position X="14" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\ServiceOperationException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WcfJsonFormatter.Exceptions.TypeUnresolvedException">
+    <Position X="16.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\TypeUnresolvedException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WcfJsonFormatter.Configuration.ConfigServiceElement">
+    <Position X="20.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Configuration\ConfigServiceElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WcfJsonFormatter.Configuration.ResolverType">
+    <Position X="20.5" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAQAAAAAAAQEAAAAAAAAAAAAAABAAAIAAAACAAA=</HashCode>
+      <FileName>Configuration\ResolverType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WcfJsonFormatter.Configuration.SerializerSettings">
+    <Position X="22.75" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQEAAAAAAAAAAAICIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Configuration\SerializerSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WcfJsonFormatter.Configuration.ServiceType">
+    <Position X="18.25" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQEgAAAAAQAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Configuration\ServiceType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WcfJsonFormatter.Configuration.ServiceTypeCollection&lt;TElement&gt;">
+    <Position X="29" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEICAAAAAAAAIAAQCAAAhAAAAAABAAAACAIAAABAAAQ=</HashCode>
+      <FileName>Configuration\ServiceTypeCollection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WcfJsonFormatter.Configuration.ServiceTypeRegister">
+    <Position X="26" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAACBRAGKBRQDAAAAAAQQQEAAIJAAAACAAAAAAkCAA=</HashCode>
+      <FileName>Configuration\ServiceTypeRegister.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WcfJsonFormatter.WebHttpJsonBehavior">
+    <Position X="8.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAQAJBAQCAAAEAAAAIAAAAIAAEAQAAAAAAIAAAIAA=</HashCode>
+      <FileName>WebHttpJsonBehavior.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WcfJsonFormatter.WebHttpJsonResolverBehavior">
+    <Position X="8.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAEAAEAIAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>WebHttpJsonResolverBehavior.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="WcfJsonFormatter.IOperationInfo">
+    <Position X="2.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAAAAAAAAAACAAAAAAABAAAAAAAQ=</HashCode>
+      <FileName>IOperationInfo.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WcfJsonFormatter.IServiceRegister">
+    <Position X="26" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABBAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IServiceRegister.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WcfJsonFormatter.ISerializationBinder">
+    <Position X="18.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>OperationTypeBinder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WcfJsonFormatter.IWebHttpJsonBehavior">
+    <Position X="4.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAIAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IWebHttpJsonBehavior.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

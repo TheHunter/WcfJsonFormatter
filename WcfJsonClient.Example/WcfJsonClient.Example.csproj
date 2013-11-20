@@ -71,6 +71,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\WcfJsonNetFormatter\WcfJsonNetFormatter\WcfJsonNetFormatter.csproj">
+      <Project>{27dc70d0-42f6-44b7-bd02-2f2f834cc713}</Project>
+      <Name>WcfJsonNetFormatter</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WcfJsonFormatter\WcfJsonFormatter.csproj">
       <Project>{A488872B-9D9B-46A2-B0BE-DF14EB3AEB7D}</Project>
       <Name>WcfJsonFormatter</Name>

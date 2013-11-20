@@ -11,6 +11,7 @@ using PersistentLayer.Domain;
 using PersistentLayer.NHibernate;
 using PersistentLayer.NHibernate.Impl;
 using WcfJsonFormatter;
+using WcfJsonNetFormatter;
 
 namespace WcfJsonService.Example
 {
@@ -29,7 +30,8 @@ namespace WcfJsonService.Example
         private void Initialize()
         {
             ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterType<SalesService>();
+            builder.RegisterType<SalesService>()
+                   .UsingConstructor(typeof (INhPagedDAO));
 
             ISessionFactory current = WcfServiceHolder.DefaultSessionFactory;
 
@@ -61,7 +63,7 @@ namespace WcfJsonService.Example
                 };
 
                 serviceHost.AddServiceEndpoint(typeof(ISalesService), webBinding, "json")
-                    .Behaviors.Add(new WebHttpJsonBehavior());
+                    .Behaviors.Add(new WebHttpNsJsonBehavior());
 
                 serviceHost.AddServiceEndpoint(typeof(ISalesService), new BasicHttpBinding(), baseAddress);
 

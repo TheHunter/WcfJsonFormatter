@@ -23,7 +23,12 @@ namespace WcfJsonFormatter
         /// </summary>
         bool CheckOperationTypes { get; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="isFullname"></param>
+        /// <returns></returns>
         Type GetTypeByName(string name, bool isFullname);
     }
 }

@@ -6,9 +6,11 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.ServiceModel.Web;
 using System.Text;
 using PersistentLayer.Domain;
 using WcfJsonFormatter;
+using WcfJsonNetFormatter;
 
 namespace WcfJsonClient.Example
 {
@@ -21,6 +23,7 @@ namespace WcfJsonClient.Example
             //client.Run();
             //client.RunJson();
             client.RunJsonProxy();
+            //client.RunJsonProxy2();
         }
 
         private void Initialize()
@@ -82,7 +85,7 @@ namespace WcfJsonClient.Example
 
 
             ChannelFactory<ISalesService> channelFactory = new ChannelFactory<ISalesService>(webBinding, new EndpointAddress(baseAddress + "/json"));
-            channelFactory.Endpoint.Behaviors.Add(new WebHttpJsonBehavior());
+            channelFactory.Endpoint.Behaviors.Add(new WebHttpNsJsonBehavior());
 
             ISalesService client = channelFactory.CreateChannel();
 
@@ -112,7 +115,7 @@ namespace WcfJsonClient.Example
 
             using (SalesService proxy = new SalesService(webBinding, endpoint))
             {
-                proxy.Endpoint.Behaviors.Add(new WebHttpJsonBehavior());
+                proxy.Endpoint.Behaviors.Add(new WebHttpNsJsonBehavior());
                 
                 try
                 {
@@ -179,5 +182,6 @@ namespace WcfJsonClient.Example
                 }
             }
         }
+
     }
 }

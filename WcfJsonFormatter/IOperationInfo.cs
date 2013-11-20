@@ -24,5 +24,10 @@ namespace WcfJsonFormatter
         /// 
         /// </summary>
         string Action { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        OperationInfoType OperationType { get; }
     }
 }

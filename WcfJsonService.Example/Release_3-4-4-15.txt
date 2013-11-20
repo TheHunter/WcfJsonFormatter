@@ -1,0 +1,121 @@
+Release notes:
+
+New methods for getting properties values from IPersistentClassInfo objects.
+
+Another important thing is some classes are deprecated, and this classes are underneath of WCF namespace, those classes are deprecated
+because they are hardly coupled with Nhibernate, and in my opinion this implementation is not directly associated with this component (PersistentLayer).
+
+Certainly It exists another solution of that, now in fact I developed a new open source project named WcfExtensions, and the binary source can be downloaded
+by Nuget using the suitable widzard present in Visual studio, or in alternative you can write directly into nuget console application this:
+
+        PM> Install-Package WcfConfigExtensions
+
+Or if you want the source code, you ca do it visiting the repository by this address:
+        
+        https://github.com/TheHunter/WcfExtensions.git
+        
+
+NOTE:   The name of package is different to name project beacuse of the existence of another package with the same name of my project.
+
+
+Now, I want to show how come WcfExtension can be used:
+
+I suppose to replace the deprecated classes, so you need to implement an static class for binding and unbinding the session, like this:
+
+///////////////////////////////////////////////////////////
+
+public interface IMyService
+{
+    //.... your wcf service operations..
+}
+
+
+///////////////////////////////////////////////////////////
+
+public static class WcfServiceHolder
+{
+    private static readonly ISessionFactory Sessionfactory;
+    
+    // incomingAction
+    public static void BindSession()
+    {
+        lock (Sessionfactory)
+        {
+            ISession session = Sessionfactory.OpenSession();
+            CurrentSessionContext.Bind(session);
+        }
+    }
+    
+    // UnbindSession
+    public static void UnbindSession()
+    {
+        lock (Sessionfactory)
+        {
+            ISession session = CurrentSessionContext.Unbind(Sessionfactory);
+            if (session != null && session.IsOpen)
+                session.Close();
+        }
+    }
+}
+
+
+Now you can use the *.config file in order to add new service behavior into your wcf service, look at this:
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+<system.serviceModel>
+
+    <!--another section elements for configuring your services-->
+    
+    <behaviors>
+        <serviceBehaviors>
+            <behavior name="MyNamespace.MyService">
+              <nhSessionBinder incomingAction="BindSession"
+                               outgoingAction="UnbindSession"
+                               providerType="MyNamespace.WcfServiceHolder, MyNamespace"
+                               />
+            
+        </behavior>
+        </serviceBehaviors>
+    </behaviors>
+
+    <extensions>
+        <behaviorExtensions>
+            <add name="nhSessionBinder" type="WcfExtensions.Configuration.ActionServiceBehaviorElement`1[[WcfExtensions.ActionServiceBehavior, WcfExtensions]], WcfExtensions" />
+        </behaviorExtensions>
+    </extensions>
+
+</system.serviceModel>
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+If you want, you can use an attribute:
+
+[ActionServiceBehavior(typeof(WcfServiceHolder), "BindSession", "UnbindSession")]
+public interface MyService
+    : IMyService
+{
+    // implementation of ServiceContract
+}
+
+
+So, you can see the type of behavior extension used into <behaviorExtensions> element, in this case the wcf operations were configured for being inspected when wcf operations
+are invoked, in particolar after receiving the request operation, the BindSession() method is invoked, and before services send the reply, the UnbindSession() method will be invoked.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

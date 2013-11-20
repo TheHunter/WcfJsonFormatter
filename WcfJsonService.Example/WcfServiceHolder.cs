@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using NHibernate;
+using NHibernate.Context;
 using PersistentLayer.Domain;
 using PersistentLayer.NHibernate;
 
@@ -64,6 +65,31 @@ namespace WcfJsonService.Example
             get
             {
                 return Sessionfactory;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void BindSession()
+        {
+            lock (Sessionfactory)
+            {
+                ISession session = Sessionfactory.OpenSession();
+                CurrentSessionContext.Bind(session);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void UnbindSession()
+        {
+            lock (Sessionfactory)
+            {
+                ISession session = CurrentSessionContext.Unbind(Sessionfactory);
+                if (session != null && session.IsOpen)
+                    session.Close();
             }
         }
 

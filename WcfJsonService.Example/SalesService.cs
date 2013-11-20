@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ServiceModel;
+using System.ServiceModel.Activation;
 using NHibernate;
 using NHibernate.Criterion;
 using System.Linq;
@@ -9,8 +10,9 @@ using PersistentLayer.NHibernate.WCF;
 
 namespace WcfJsonService.Example
 {
-    [NhServiceBehavior("DefaultSessionFactory", typeof(WcfServiceHolder))]
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, IncludeExceptionDetailInFaults = true)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
+    //[AspNetCompatibilityRequirements(RequirementsMode =
+    //    AspNetCompatibilityRequirementsMode.Allowed)]
     public class SalesService
         : ISalesService
     {
@@ -37,6 +39,12 @@ namespace WcfJsonService.Example
             return ag;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         public Agency GetFirstAgency(int pageIndex, int pageSize)
         {
             Agency ag = new Agency();
