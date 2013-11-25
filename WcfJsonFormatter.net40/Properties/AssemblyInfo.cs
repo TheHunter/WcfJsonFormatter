@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The hunter company")]
-[assembly: AssemblyProduct("WcfJsonFormatter.net40")]
+[assembly: AssemblyProduct("WcfJsonFormatter")]
 [assembly: AssemblyCopyright("Licensed under LGPL")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

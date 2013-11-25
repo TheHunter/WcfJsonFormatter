@@ -44,7 +44,12 @@ namespace WcfJsonFormatter
 
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operationDescription"></param>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
         protected override IDispatchMessageFormatter GetRequestDispatchFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
         {
             if (this.IsGetOperation(operationDescription))
@@ -58,7 +63,12 @@ namespace WcfJsonFormatter
             return this.GetDispatchFormatter(operationDescription, endpoint);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operationDescription"></param>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
         protected override IDispatchMessageFormatter GetReplyDispatchFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
         {
             if (operationDescription.Messages.Count == 1 ||
@@ -68,7 +78,12 @@ namespace WcfJsonFormatter
             return this.GetDispatchFormatter(operationDescription, endpoint);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operationDescription"></param>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
         protected override IClientMessageFormatter GetRequestClientFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
         {
             if (operationDescription.Behaviors.Find<WebGetAttribute>() != null)
@@ -87,7 +102,12 @@ namespace WcfJsonFormatter
 
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operationDescription"></param>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
         protected override IClientMessageFormatter GetReplyClientFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
         {
             if (operationDescription.Messages.Count == 1 ||
@@ -97,13 +117,28 @@ namespace WcfJsonFormatter
             return GetClientFormatter(operationDescription, endpoint);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operationDescription"></param>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
         public abstract IDispatchJsonMessageFormatter MakeDispatchMessageFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint);
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operationDescription"></param>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
         public abstract IClientJsonMessageFormatter MakeClientMessageFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint);
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operationDescription"></param>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
         private IClientJsonMessageFormatter GetClientFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
         {
             try
@@ -120,7 +155,12 @@ namespace WcfJsonFormatter
             }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operationDescription"></param>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
         private IDispatchJsonMessageFormatter GetDispatchFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
         {
             try

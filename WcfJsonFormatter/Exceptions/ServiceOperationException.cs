@@ -5,6 +5,9 @@ using System.Text;
 
 namespace WcfJsonFormatter.Exceptions
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ServiceOperationException
         : ConfigServiceException
     {

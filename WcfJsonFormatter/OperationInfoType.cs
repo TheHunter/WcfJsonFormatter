@@ -5,6 +5,9 @@ using System.Text;
 
 namespace WcfJsonFormatter
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public enum OperationInfoType
     {
         /// <summary>

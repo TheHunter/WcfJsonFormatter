@@ -29,7 +29,11 @@ namespace WcfJsonFormatter.Formatters
         {
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="parameters"></param>
         public void DeserializeRequest(Message message, object[] parameters)
         {
             object bodyFormatProperty;
@@ -71,10 +75,19 @@ namespace WcfJsonFormatter.Formatters
             return replyMessage;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <param name="parameters"></param>
         public abstract void DecodeParameters(byte[] body, object[] parameters);
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
         public abstract byte[] EncodeReply(object[] parameters, object result);
     }
 }

@@ -16,6 +16,9 @@ namespace WcfJsonFormatter.Configuration
     {
         private bool wasResolved;
 
+        /// <summary>
+        /// 
+        /// </summary>
         [ConfigurationProperty("serviceType", IsRequired = true)]
         public ServiceType ServiceType
         {
@@ -23,6 +26,9 @@ namespace WcfJsonFormatter.Configuration
             set { this["serviceType"] = value; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [ConfigurationProperty("binderType", IsRequired = true)]
         public ServiceType BinderType
         {
@@ -53,14 +59,19 @@ namespace WcfJsonFormatter.Configuration
             get { return this.ServiceType; }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public bool WasResolved
         {
             get { return this.wasResolved; }
             internal set { this.wasResolved = value; }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return string.Format("serviceType: {0}, binderType: {1}", this.ServiceType, this.BinderType);

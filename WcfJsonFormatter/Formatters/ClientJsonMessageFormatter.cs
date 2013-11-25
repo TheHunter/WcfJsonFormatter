@@ -37,7 +37,12 @@ namespace WcfJsonFormatter.Formatters
             this.operationUri = new Uri(endpointAddress + operation.Name);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="messageVersion"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         public Message SerializeRequest(MessageVersion messageVersion, object[] parameters)
         {
             byte[] body = this.EncodeParameters(parameters);
@@ -51,7 +56,12 @@ namespace WcfJsonFormatter.Formatters
             return requestMessage;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         public object DeserializeReply(Message message, object[] parameters)
         {
             object bodyFormatProperty;
@@ -71,10 +81,19 @@ namespace WcfJsonFormatter.Formatters
             return this.DecodeReply(bodyReader.ReadContentAsBase64(), parameters);
         }
 
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         public abstract byte[] EncodeParameters(object[] parameters);
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         public abstract object DecodeReply(byte[] body, object[] parameters);
     }
 }

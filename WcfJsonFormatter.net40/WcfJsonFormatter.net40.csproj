@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\WcfJsonFormatter.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\WcfJsonFormatter.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -72,6 +74,9 @@
     </Compile>
     <Compile Include="..\WcfJsonFormatter\Exceptions\ConfigServiceException.cs">
       <Link>Exceptions\ConfigServiceException.cs</Link>
+    </Compile>
+    <Compile Include="..\WcfJsonFormatter\Exceptions\NullMessageFormatterException.cs">
+      <Link>Exceptions\NullMessageFormatterException.cs</Link>
     </Compile>
     <Compile Include="..\WcfJsonFormatter\Exceptions\ResolverTypeException.cs">
       <Link>Exceptions\ResolverTypeException.cs</Link>
@@ -127,11 +132,18 @@
     <Compile Include="..\WcfJsonFormatter\RawContentMapper.cs">
       <Link>RawContentMapper.cs</Link>
     </Compile>
+    <Compile Include="..\WcfJsonFormatter\WebHttpJsonBehavior.cs">
+      <Link>WebHttpJsonBehavior.cs</Link>
+    </Compile>
+    <Compile Include="..\WcfJsonFormatter\WebHttpJsonResolverBehavior.cs">
+      <Link>WebHttpJsonResolverBehavior.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -15,7 +15,10 @@ namespace WcfJsonFormatter
 
         private readonly IServiceRegister serviceRegister;
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceRegister"></param>
         public OperationTypeBinder(IServiceRegister serviceRegister)
         {
             this.serviceRegister = serviceRegister;
@@ -34,8 +37,20 @@ namespace WcfJsonFormatter
 
 
 #if (BEFORE_NET40)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serializedType"></param>
+        /// <param name="assemblyName"></param>
+        /// <param name="typeName"></param>
         public void BindToName(Type serializedType, out string assemblyName, out string typeName)
 #else
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serializedType"></param>
+        /// <param name="assemblyName"></param>
+        /// <param name="typeName"></param>
         public override void BindToName(Type serializedType, out string assemblyName, out string typeName)
 #endif
         {

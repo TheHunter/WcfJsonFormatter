@@ -23,7 +23,9 @@ namespace WcfJsonFormatter.Configuration
         private List<ResolverType> resolverTypes;
         private SerializerSettings serializerConfig;
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public ServiceTypeRegister()
         {
             this.assemblies = new HashSet<Assembly>();
@@ -38,13 +40,18 @@ namespace WcfJsonFormatter.Configuration
             this.undefinedResolvers.Add(typeof(IDictionary<,>), typeof(Dictionary<,>));
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         [ConfigurationProperty("serializer", IsRequired = false, DefaultValue = null)]
         protected SerializerSettings Serializer
         {
             get { return (SerializerSettings)base["serializer"]; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [ConfigurationProperty("serviceTypes", IsDefaultCollection = false)]
         [ConfigurationCollection(typeof(ServiceTypeCollection<ServiceType>))]
         protected ServiceTypeCollection<ServiceType> ServiceTypeCollection
@@ -52,7 +59,9 @@ namespace WcfJsonFormatter.Configuration
             get { return (ServiceTypeCollection<ServiceType>)base["serviceTypes"]; }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         [ConfigurationProperty("resolverTypes", IsDefaultCollection = false)]
         [ConfigurationCollection(typeof(ServiceTypeCollection<ResolverType>))]
         protected ServiceTypeCollection<ResolverType> ResolverTypeCollection
@@ -60,6 +69,9 @@ namespace WcfJsonFormatter.Configuration
             get { return (ServiceTypeCollection<ResolverType>)base["resolverTypes"]; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [ConfigurationProperty("checkOperationTypes", IsRequired = false, DefaultValue = false)]
         public bool CheckOperationTypes
         {

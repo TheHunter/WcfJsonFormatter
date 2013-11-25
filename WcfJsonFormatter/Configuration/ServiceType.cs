@@ -14,7 +14,9 @@ namespace WcfJsonFormatter.Configuration
     public class ServiceType
         : ConfigServiceElement
     {
-        
+        /// <summary>
+        /// 
+        /// </summary>
         [ConfigurationProperty("name", IsRequired = true)]
         public string Name
         {
@@ -22,6 +24,9 @@ namespace WcfJsonFormatter.Configuration
             set { this["name"] = value; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [ConfigurationProperty("assembly", IsRequired = true)]
         public string Assembly
         {
@@ -37,13 +42,20 @@ namespace WcfJsonFormatter.Configuration
             get { return GetHashCode(); }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             return 11 * (this.Name.GetHashCode() - this.Assembly.GetHashCode());
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="compareTo"></param>
+        /// <returns></returns>
         public override bool Equals(object compareTo)
         {
             if (compareTo == null)
