@@ -27,7 +27,6 @@ namespace WcfJsonFormatter
         protected WebHttpJsonBehavior()
             :this(new List<Type>())
         {
-            
         }
 
         /// <summary>
@@ -43,6 +42,11 @@ namespace WcfJsonFormatter
                 this.configRegister.LoadTypes(knownTypes);
 
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IServiceRegister ConfigRegister { get { return this.configRegister; } }
 
         /// <summary>
         /// 

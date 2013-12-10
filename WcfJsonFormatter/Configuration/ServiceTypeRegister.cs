@@ -38,6 +38,8 @@ namespace WcfJsonFormatter.Configuration
             this.undefinedResolvers.Add(typeof(IList<>), typeof(List<>));
             this.undefinedResolvers.Add(typeof(ICollection<>), typeof(Collection<>));
             this.undefinedResolvers.Add(typeof(IDictionary<,>), typeof(Dictionary<,>));
+
+            this.serializerConfig = new SerializerSettings();
         }
 
         /// <summary>
@@ -87,7 +89,7 @@ namespace WcfJsonFormatter.Configuration
 
             serviceTypes = new List<ServiceType>(this.ServiceTypeCollection.Cast<ServiceType>());
             resolverTypes = new List<ResolverType>(this.ResolverTypeCollection.Cast<ResolverType>());
-            serializerConfig = this.Serializer ?? new SerializerSettings();
+            serializerConfig = this.Serializer;
 
             RegisterServiceType();
             RegisterResolverType();

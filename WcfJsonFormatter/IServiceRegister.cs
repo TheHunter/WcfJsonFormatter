@@ -14,6 +14,11 @@ namespace WcfJsonFormatter
         /// <summary>
         /// 
         /// </summary>
+        SerializerSettings SerializerConfig { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
         Type TryToNormalize(Type type);

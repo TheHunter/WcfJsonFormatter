@@ -17,6 +17,11 @@ namespace WcfJsonFormatter
         /// <summary>
         /// 
         /// </summary>
+        IServiceRegister ConfigRegister { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="operationDescription"></param>
         /// <param name="endpoint"></param>
         /// <returns></returns>
