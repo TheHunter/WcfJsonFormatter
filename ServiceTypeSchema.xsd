@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="configuration">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="configSections">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="section">
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string" use="required" />
+                  <xs:attribute name="type" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="serviceTypeRegister">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="serializer">
+                <xs:complexType>
+                  <xs:attribute name="onlyPublicConstructor" type="xs:boolean" use="optional" default="false" />
+                  <xs:attribute name="enablePolymorphicMembers" type="xs:boolean" use="optional" default="false" />
+                  <xs:attribute name="dateFormatHandling" type="xs:string" use="optional" default="IsoDateFormat" />
+                  <xs:attribute name="dateFormatString" type="xs:string" use="optional" />
+                  <xs:attribute name="dateParseHandling" type="xs:string" use="optional" default="DateTime" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="serviceTypes">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="serviceType">
+                      <xs:complexType>
+                        <xs:attribute name="name" type="xs:string" use="required" />
+                        <xs:attribute name="assembly" type="xs:string" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="resolverTypes">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" name="resolverType">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="serviceType">
+                            <xs:complexType>
+                              <xs:attribute name="name" type="xs:string" use="required" />
+                              <xs:attribute name="assembly" type="xs:string" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="binderType">
+                            <xs:complexType>
+                              <xs:attribute name="name" type="xs:string" use="required" />
+                              <xs:attribute name="assembly" type="xs:string" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="checkOperationTypes" type="xs:boolean" use="optional" default="false" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
