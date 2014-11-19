@@ -47,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\DateFormatStyle.cs" />
+    <Compile Include="Configuration\DateParseStyle.cs" />
     <Compile Include="Exceptions\NullMessageFormatterException.cs" />
     <Compile Include="Formatters\ClientJsonMessageFormatter.cs" />
     <Compile Include="Formatters\DispatchJsonMessageFormatter.cs" />

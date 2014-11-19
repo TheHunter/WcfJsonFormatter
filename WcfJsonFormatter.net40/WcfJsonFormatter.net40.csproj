@@ -54,6 +54,12 @@
     <Compile Include="..\WcfJsonFormatter\Configuration\ConfigServiceElement.cs">
       <Link>Configuration\ConfigServiceElement.cs</Link>
     </Compile>
+    <Compile Include="..\WcfJsonFormatter\Configuration\DateFormatStyle.cs">
+      <Link>Configuration\DateFormatStyle.cs</Link>
+    </Compile>
+    <Compile Include="..\WcfJsonFormatter\Configuration\DateParseStyle.cs">
+      <Link>Configuration\DateParseStyle.cs</Link>
+    </Compile>
     <Compile Include="..\WcfJsonFormatter\Configuration\ResolverType.cs">
       <Link>Configuration\ResolverType.cs</Link>
     </Compile>

@@ -20,12 +20,14 @@ namespace WcfJsonFormatter
         : WebHttpBehavior, IWebHttpJsonBehavior
     {
         private readonly ServiceTypeRegister configRegister;
+        private readonly bool enableUriTemplate;
 
         /// <summary>
         /// 
         /// </summary>
-        protected WebHttpJsonBehavior()
-            :this(new List<Type>())
+        /// <param name="enableUriTemplate"></param>
+        protected WebHttpJsonBehavior(bool enableUriTemplate = false)
+            : this(new List<Type>(), enableUriTemplate)
         {
         }
 
@@ -33,12 +35,15 @@ namespace WcfJsonFormatter
         /// 
         /// </summary>
         /// <param name="knownTypes"></param>
-        protected WebHttpJsonBehavior(IEnumerable<Type> knownTypes)
+        /// <param name="enableUriTemplate"></param>
+        protected WebHttpJsonBehavior(IEnumerable<Type> knownTypes, bool enableUriTemplate = false)
         {
+            this.enableUriTemplate = enableUriTemplate;
+
             this.configRegister = ConfigurationManager.GetSection("serviceTypeRegister") as ServiceTypeRegister
                             ?? new ServiceTypeRegister();
 
-            if (knownTypes != null && knownTypes.Any())
+            if (knownTypes != null)
                 this.configRegister.LoadTypes(knownTypes);
 
         }
@@ -204,14 +209,17 @@ namespace WcfJsonFormatter
         /// 
         /// </summary>
         /// <param name="operation"></param>
-        private void ValidateOperation(OperationDescription operation)
+        protected void ValidateOperation(OperationDescription operation)
         {
             if (operation.Messages.Count > 1 && operation.Messages[1].Body.Parts.Count > 0)
                 throw new InvalidOperationException("Operations cannot have out/ref parameters.");
 
-            string uriTemplate = this.GetUriTemplate(operation);
-            if (uriTemplate != null)
-                throw new InvalidOperationException("UriTemplate support not implemented in this behavior.");
+            if (!this.enableUriTemplate)
+            {
+                string uriTemplate = this.GetUriTemplate(operation);
+                if (uriTemplate != null)
+                    throw new InvalidOperationException("UriTemplate is not supported by this behavior.");
+            }
 
             WebMessageBodyStyle bodyStyle = this.GetBodyStyle(operation);
 
@@ -228,7 +236,7 @@ namespace WcfJsonFormatter
         /// </summary>
         /// <param name="operation"></param>
         /// <returns></returns>
-        private string GetUriTemplate(OperationDescription operation)
+        protected string GetUriTemplate(OperationDescription operation)
         {
             WebGetAttribute wga = operation.Behaviors.Find<WebGetAttribute>();
             if (wga != null)
@@ -246,7 +254,7 @@ namespace WcfJsonFormatter
         /// </summary>
         /// <param name="operation"></param>
         /// <returns></returns>
-        private WebMessageBodyStyle GetBodyStyle(OperationDescription operation)
+        protected WebMessageBodyStyle GetBodyStyle(OperationDescription operation)
         {
             WebGetAttribute wga = operation.Behaviors.Find<WebGetAttribute>();
             if (wga != null)
@@ -264,7 +272,7 @@ namespace WcfJsonFormatter
         /// </summary>
         /// <param name="operation"></param>
         /// <returns></returns>
-        private bool IsGetOperation(OperationDescription operation)
+        protected bool IsGetOperation(OperationDescription operation)
         {
             WebGetAttribute wga = operation.Behaviors.Find<WebGetAttribute>();
             if (wga != null)

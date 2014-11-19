@@ -33,6 +33,33 @@ namespace WcfJsonFormatter.Configuration
         /// <summary>
         /// 
         /// </summary>
+        [ConfigurationProperty("dateFormatHandling", IsRequired = false, DefaultValue = DateFormatStyle.IsoDateFormat)]
+        public DateFormatStyle DateFormatHandling
+        {
+            get { return (DateFormatStyle)this["dateFormatHandling"]; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [ConfigurationProperty("dateFormatString", IsRequired = false, DefaultValue = null)]
+        public string DateFormatString
+        {
+            get { return this["dateFormatString"] as string; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [ConfigurationProperty("dateParseHandling", IsRequired = false, DefaultValue = DateParseStyle.DateTime)]
+        public DateParseStyle DateParseHandling
+        {
+            get { return (DateParseStyle)this["dateParseHandling"]; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public override object Key
         {
             get { return GetHashCode(); }
