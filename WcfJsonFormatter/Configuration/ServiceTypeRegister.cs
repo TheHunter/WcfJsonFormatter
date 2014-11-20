@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Xml;
 using WcfJsonFormatter.Exceptions;
 
 namespace WcfJsonFormatter.Configuration
@@ -22,6 +24,7 @@ namespace WcfJsonFormatter.Configuration
         private List<ServiceType> serviceTypes;
         private List<ResolverType> resolverTypes;
         private SerializerSettings serializerConfig;
+        private bool checkOperationTypes;
 
         /// <summary>
         /// 
@@ -40,6 +43,7 @@ namespace WcfJsonFormatter.Configuration
             this.undefinedResolvers.Add(typeof(IDictionary<,>), typeof(Dictionary<,>));
 
             this.serializerConfig = new SerializerSettings();
+            
         }
 
         /// <summary>
@@ -74,25 +78,18 @@ namespace WcfJsonFormatter.Configuration
         /// <summary>
         /// 
         /// </summary>
-        [ConfigurationProperty("checkOperationTypes", IsRequired = false, DefaultValue = false)]
-        public bool CheckOperationTypes
+        [ConfigurationProperty("checkOperationTypes", IsRequired = false, DefaultValue = "0")]
+        private string checkOperationTypesCfg
         {
-            get { return (bool)base["checkOperationTypes"]; }
+            get { return base["checkOperationTypes"] as string; }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        protected override void PostDeserialize()
+        public bool CheckOperationTypes
         {
-            base.PostDeserialize();
-
-            serviceTypes = new List<ServiceType>(this.ServiceTypeCollection.Cast<ServiceType>());
-            resolverTypes = new List<ResolverType>(this.ResolverTypeCollection.Cast<ResolverType>());
-            serializerConfig = this.Serializer;
-
-            RegisterServiceType();
-            RegisterResolverType();
+            get { return this.checkOperationTypes; }
         }
 
         /// <summary>
@@ -398,6 +395,31 @@ namespace WcfJsonFormatter.Configuration
                                   ?? type.GetInterface("IEnumerable`1", true);
 
             return collectionType != null;
+        }
+
+        /// <inheritdoc/>
+        protected override void PostDeserialize()
+        {
+            base.PostDeserialize();
+
+            this.serviceTypes = new List<ServiceType>(this.ServiceTypeCollection.Cast<ServiceType>());
+            this.resolverTypes = new List<ResolverType>(this.ResolverTypeCollection.Cast<ResolverType>());
+            this.serializerConfig = this.Serializer;
+
+            var ckOperationType = this.CheckOperationTypes;
+            this.checkOperationTypes = (ckOperationType.Equals("true") || ckOperationType.Equals("1"));
+
+            RegisterServiceType();
+            RegisterResolverType();
+        }
+
+        /// <inheritdoc/>
+        protected override bool OnDeserializeUnrecognizedAttribute(string name, string value)
+        {
+            if (name.Equals("xmlns"))
+                return true;
+
+            return base.OnDeserializeUnrecognizedAttribute(name, value);
         }
     }
 }

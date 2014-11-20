@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace WcfJsonFormatter.Configuration
 {
@@ -12,22 +13,41 @@ namespace WcfJsonFormatter.Configuration
     public class SerializerSettings
         : ConfigServiceElement
     {
+        private bool onlyPublicConstructor;
+        private bool enablePolymorphicMembers;
+
         /// <summary>
         /// 
         /// </summary>
-        [ConfigurationProperty("onlyPublicConstructor", IsRequired = false, DefaultValue = false)]
-        public bool OnlyPublicConstructor
+        [ConfigurationProperty("onlyPublicConstructor", IsRequired = false, DefaultValue = "0")]
+        private string onlyPublicConstructorCfg
         {
-            get { return (bool)this["onlyPublicConstructor"]; }
+            get { return this["onlyPublicConstructor"] as string; }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        [ConfigurationProperty("enablePolymorphicMembers", IsRequired = false, DefaultValue = false)]
+        public bool OnlyPublicConstructor
+        {
+            get { return this.onlyPublicConstructor; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [ConfigurationProperty("enablePolymorphicMembers", IsRequired = false, DefaultValue = "0")]
+        private string enablePolymorphicMembersCfg
+        {
+            get { return this["enablePolymorphicMembers"] as string; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public bool EnablePolymorphicMembers
         {
-            get { return (bool)this["enablePolymorphicMembers"]; }
+            get { return this.enablePolymorphicMembers; }
         }
 
         /// <summary>
@@ -57,27 +77,31 @@ namespace WcfJsonFormatter.Configuration
             get { return (DateParseStyle)this["dateParseHandling"]; }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
+        /// <inheritdoc/>
         public override object Key
         {
             get { return GetHashCode(); }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
+        protected override void PostDeserialize()
+        {
+            base.PostDeserialize();
+
+            var onlyPublicCtr = this.onlyPublicConstructorCfg;
+            var enablePolyMembers = this.enablePolymorphicMembersCfg;
+
+            this.onlyPublicConstructor = (onlyPublicCtr != null) && (onlyPublicCtr.Equals("true") || onlyPublicCtr.Equals("1"));
+            this.enablePolymorphicMembers = (enablePolyMembers != null) && (enablePolyMembers.Equals("true") || enablePolyMembers.Equals("1"));
+        }
+
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             return this.OnlyPublicConstructor.GetHashCode() - this.EnablePolymorphicMembers.GetHashCode();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public override string ToString()
         {
             return string.Format("onlyPublicConstructor: {0}, enablePolymorphicMembers: {1}", this.OnlyPublicConstructor, this.EnablePolymorphicMembers);

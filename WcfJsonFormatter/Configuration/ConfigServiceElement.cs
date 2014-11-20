@@ -16,5 +16,14 @@ namespace WcfJsonFormatter.Configuration
         /// 
         /// </summary>
         public abstract object Key { get; }
+
+        /// <inheritdoc/>
+        protected override bool OnDeserializeUnrecognizedAttribute(string name, string value)
+        {
+            if (name.Equals("xmlns"))
+                return true;
+
+            return base.OnDeserializeUnrecognizedAttribute(name, value);
+        }
     }
 }
