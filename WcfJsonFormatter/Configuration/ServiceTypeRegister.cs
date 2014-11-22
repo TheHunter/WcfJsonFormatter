@@ -406,7 +406,7 @@ namespace WcfJsonFormatter.Configuration
             this.resolverTypes = new List<ResolverType>(this.ResolverTypeCollection.Cast<ResolverType>());
             this.serializerConfig = this.Serializer;
 
-            var ckOperationType = this.CheckOperationTypes;
+            var ckOperationType = this.checkOperationTypesCfg;
             this.checkOperationTypes = (ckOperationType.Equals("true") || ckOperationType.Equals("1"));
 
             RegisterServiceType();
