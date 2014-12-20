@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
-using System.Text;
 using WcfJsonFormatter.Configuration;
 using WcfJsonFormatter.Exceptions;
 using WcfJsonFormatter.Formatters;
