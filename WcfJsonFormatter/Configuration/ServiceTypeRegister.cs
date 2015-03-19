@@ -12,7 +12,7 @@ using WcfJsonFormatter.Exceptions;
 namespace WcfJsonFormatter.Configuration
 {
     /// <summary>
-    /// 
+    /// Class ServiceTypeRegister.
     /// </summary>
     public class ServiceTypeRegister
         : ConfigurationSection, IServiceRegister
@@ -27,7 +27,7 @@ namespace WcfJsonFormatter.Configuration
         private bool checkOperationTypes;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="ServiceTypeRegister"/> class.
         /// </summary>
         public ServiceTypeRegister()
         {
@@ -47,8 +47,9 @@ namespace WcfJsonFormatter.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Gets the serializer.
         /// </summary>
+        /// <value>The serializer.</value>
         [ConfigurationProperty("serializer", IsRequired = false, DefaultValue = null)]
         protected SerializerSettings Serializer
         {
@@ -56,8 +57,9 @@ namespace WcfJsonFormatter.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Gets the service type collection.
         /// </summary>
+        /// <value>The service type collection.</value>
         [ConfigurationProperty("serviceTypes", IsDefaultCollection = false)]
         [ConfigurationCollection(typeof(ServiceTypeCollection<ServiceType>))]
         protected ServiceTypeCollection<ServiceType> ServiceTypeCollection
@@ -66,8 +68,9 @@ namespace WcfJsonFormatter.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Gets the resolver type collection.
         /// </summary>
+        /// <value>The resolver type collection.</value>
         [ConfigurationProperty("resolverTypes", IsDefaultCollection = false)]
         [ConfigurationCollection(typeof(ServiceTypeCollection<ResolverType>))]
         protected ServiceTypeCollection<ResolverType> ResolverTypeCollection
@@ -76,34 +79,37 @@ namespace WcfJsonFormatter.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Gets the check operation types CFG.
         /// </summary>
+        /// <value>The check operation types CFG.</value>
         [ConfigurationProperty("checkOperationTypes", IsRequired = false, DefaultValue = "0")]
-        private string checkOperationTypesCfg
+        private string CheckOperationTypesCfg
         {
             get { return base["checkOperationTypes"] as string; }
         }
 
         /// <summary>
-        /// 
+        /// Gets a value indicating whether [check operation types].
         /// </summary>
+        /// <value><c>true</c> if [check operation types]; otherwise, <c>false</c>.</value>
         public bool CheckOperationTypes
         {
             get { return this.checkOperationTypes; }
         }
 
         /// <summary>
-        /// 
+        /// Gets the serializer configuration.
         /// </summary>
+        /// <value>The serializer configuration.</value>
         public SerializerSettings SerializerConfig
         {
             get { return this.serializerConfig; }
         }
 
         /// <summary>
-        /// 
+        /// Adds the assembly.
         /// </summary>
-        /// <param name="assembly"></param>
+        /// <param name="assembly">The assembly.</param>
         internal void AddAssembly(Assembly assembly)
         {
             if (!this.assemblies.Contains(assembly))
@@ -111,15 +117,16 @@ namespace WcfJsonFormatter.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Registers the type of the service.
         /// </summary>
+        /// <exception cref="TypeUnresolvedException"></exception>
         private void RegisterServiceType()
         {
             foreach (ServiceType serviceType in serviceTypes)
             {
                 if (serviceType == null) continue;
 
-                Assembly entry = GetAssemblyFrom(serviceType);
+                Assembly entry = this.GetAssemblyFrom(serviceType);
                 if (entry == null) continue;
 
                 if (serviceType.Name == "*")
@@ -406,7 +413,7 @@ namespace WcfJsonFormatter.Configuration
             this.resolverTypes = new List<ResolverType>(this.ResolverTypeCollection.Cast<ResolverType>());
             this.serializerConfig = this.Serializer;
 
-            var ckOperationType = this.checkOperationTypesCfg;
+            var ckOperationType = this.CheckOperationTypesCfg;
             this.checkOperationTypes = (ckOperationType.Equals("true") || ckOperationType.Equals("1"));
 
             RegisterServiceType();

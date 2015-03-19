@@ -7,9 +7,9 @@ using System.Text;
 namespace WcfJsonFormatter.Configuration
 {
     /// <summary>
-    /// 
+    /// Class ServiceTypeCollection.
     /// </summary>
-    /// <typeparam name="TElement"></typeparam>
+    /// <typeparam name="TElement">The type of the t element.</typeparam>
     public class ServiceTypeCollection<TElement>
         : ConfigurationElementCollection
         where TElement : ConfigServiceElement, new()
@@ -18,7 +18,7 @@ namespace WcfJsonFormatter.Configuration
         private readonly string propertyName;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="ServiceTypeCollection{TElement}"/> class.
         /// </summary>
         public ServiceTypeCollection()
         {
@@ -27,8 +27,9 @@ namespace WcfJsonFormatter.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Gets the name used to identify this collection of elements in the configuration file when overridden in a derived class.
         /// </summary>
+        /// <value>The name of the element.</value>
         protected override string ElementName
         {
             get
@@ -38,45 +39,46 @@ namespace WcfJsonFormatter.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Indicates whether the specified <see cref="T:System.Configuration.ConfigurationElement" /> exists in the <see cref="T:System.Configuration.ConfigurationElementCollection" />.
         /// </summary>
-        /// <param name="elementName"></param>
-        /// <returns></returns>
+        /// <param name="elementName">The name of the element to verify.</param>
+        /// <returns>true if the element exists in the collection; otherwise, false. The default is false.</returns>
         protected override bool IsElementName(string elementName)
         {
             return elementName.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase);
         }
 
         /// <summary>
-        /// 
+        /// Gets a value indicating whether the <see cref="T:System.Configuration.ConfigurationElementCollection" /> object is read only.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>true if the <see cref="T:System.Configuration.ConfigurationElementCollection" /> object is read only; otherwise, false.</returns>
         public override bool IsReadOnly()
         {
             return false;
         }
 
         /// <summary>
-        /// 
+        /// Adds the specified custom.
         /// </summary>
-        /// <param name="custom"></param>
+        /// <param name="custom">The custom.</param>
         public void Add(TElement custom)
         {
             BaseAdd(custom);
         }
 
         /// <summary>
-        /// 
+        /// Adds a configuration element to the <see cref="T:System.Configuration.ConfigurationElementCollection" />.
         /// </summary>
-        /// <param name="element"></param>
+        /// <param name="element">The <see cref="T:System.Configuration.ConfigurationElement" /> to add.</param>
         protected override void BaseAdd(ConfigurationElement element)
         {
             BaseAdd(element, false);
         }
 
         /// <summary>
-        /// 
+        /// Gets the type of the <see cref="T:System.Configuration.ConfigurationElementCollection" />.
         /// </summary>
+        /// <value>The type of the collection.</value>
         public override ConfigurationElementCollectionType CollectionType
         {
             get
@@ -86,29 +88,29 @@ namespace WcfJsonFormatter.Configuration
         }
 
         /// <summary>
-        /// 
+        /// When overridden in a derived class, creates a new <see cref="T:System.Configuration.ConfigurationElement" />.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A new <see cref="T:System.Configuration.ConfigurationElement" />.</returns>
         protected override ConfigurationElement CreateNewElement()
         {
             return new TElement();
         }
 
         /// <summary>
-        /// 
+        /// Gets the element key for a specified configuration element when overridden in a derived class.
         /// </summary>
-        /// <param name="element"></param>
-        /// <returns></returns>
+        /// <param name="element">The <see cref="T:System.Configuration.ConfigurationElement" /> to return the key for.</param>
+        /// <returns>An <see cref="T:System.Object" /> that acts as the key for the specified <see cref="T:System.Configuration.ConfigurationElement" />.</returns>
         protected override object GetElementKey(ConfigurationElement element)
         {
             return ((TElement)element).Key;
         }
 
         /// <summary>
-        /// 
+        /// Gets or sets the <see cref="TElement"/> at the specified index.
         /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
+        /// <param name="index">The index.</param>
+        /// <returns>TElement.</returns>
         public TElement this[int index]
         {
             get
@@ -126,19 +128,19 @@ namespace WcfJsonFormatter.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Indexes the of.
         /// </summary>
-        /// <param name="element"></param>
-        /// <returns></returns>
+        /// <param name="element">The element.</param>
+        /// <returns>System.Int32.</returns>
         public int IndexOf(TElement element)
         {
             return BaseIndexOf(element);
         }
 
         /// <summary>
-        /// 
+        /// Removes the specified URL.
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="url">The URL.</param>
         public void Remove(TElement url)
         {
             if (BaseIndexOf(url) >= 0)
@@ -146,9 +148,9 @@ namespace WcfJsonFormatter.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Removes at.
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="index">The index.</param>
         public void RemoveAt(int index)
         {
             BaseRemoveAt(index);
@@ -163,8 +165,9 @@ namespace WcfJsonFormatter.Configuration
         //    BaseRemove(name);
         //}
 
+
         /// <summary>
-        /// 
+        /// Clears this instance.
         /// </summary>
         public void Clear()
         {
