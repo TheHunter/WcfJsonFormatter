@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfJsonFormatter", "WcfJsonFormatter\WcfJsonFormatter.csproj", "{A488872B-9D9B-46A2-B0BE-DF14EB3AEB7D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{12438D53-5C7B-4FEE-B1F2-3796315C205B}"
@@ -17,6 +19,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{88B717C5-C334-4CC9-AE08-6D9CE9B6C772}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfJsonFormatter.Test", "WcfJsonFormatter.Test\WcfJsonFormatter.Test.csproj", "{C33C4EF8-6FC0-4566-A7CF-58BF7342326D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfJsonFormatter.net45", "WcfJsonFormatter.net45\WcfJsonFormatter.net45.csproj", "{5E101230-2D99-4A19-9302-89ABE1FD0243}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +40,10 @@ Global
 		{C33C4EF8-6FC0-4566-A7CF-58BF7342326D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C33C4EF8-6FC0-4566-A7CF-58BF7342326D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C33C4EF8-6FC0-4566-A7CF-58BF7342326D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E101230-2D99-4A19-9302-89ABE1FD0243}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E101230-2D99-4A19-9302-89ABE1FD0243}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E101230-2D99-4A19-9302-89ABE1FD0243}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E101230-2D99-4A19-9302-89ABE1FD0243}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,5 +52,6 @@ Global
 		{A488872B-9D9B-46A2-B0BE-DF14EB3AEB7D} = {C14B3CA8-6ED7-4631-808F-5089B8D8277E}
 		{B8DFFBE3-36AA-4AA4-881D-0F2EBF53094D} = {C14B3CA8-6ED7-4631-808F-5089B8D8277E}
 		{C33C4EF8-6FC0-4566-A7CF-58BF7342326D} = {88B717C5-C334-4CC9-AE08-6D9CE9B6C772}
+		{5E101230-2D99-4A19-9302-89ABE1FD0243} = {C14B3CA8-6ED7-4631-808F-5089B8D8277E}
 	EndGlobalSection
 EndGlobal

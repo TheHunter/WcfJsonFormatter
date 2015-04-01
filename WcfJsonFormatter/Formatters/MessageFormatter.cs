@@ -20,6 +20,16 @@ namespace WcfJsonFormatter.Formatters
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="serviceOperationInfo"></param>
+        /// <param name="serviceRegister"></param>
+        protected MessageFormatter(ServiceOperation serviceOperationInfo, IServiceRegister serviceRegister)
+            : this(serviceOperationInfo.Action, serviceOperationInfo.Parameters, serviceOperationInfo.ReturnType, serviceRegister) 
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="action"></param>
         /// <param name="parameters"></param>
         /// <param name="returnType"></param>
