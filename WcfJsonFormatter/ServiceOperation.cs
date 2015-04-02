@@ -26,12 +26,18 @@ namespace WcfJsonFormatter
             if (operation == null)
                 throw new ArgumentNullException("operation", "the given operation description cannot be null.");
 
-            if (operation.SyncMethod == null)
+#if (BEFORE_NET45)
+            MethodInfo operationInfo = operation.SyncMethod;
+#else
+            MethodInfo operationInfo = operation.SyncMethod ?? operation.TaskMethod;
+#endif
+
+            if (operationInfo == null)
                 throw new NullReferenceException("The SynMethod property on operation cannot be null.");
             
             this.Action = action.Trim();
-            this.Parameters = operation.SyncMethod.GetParameters();
-            this.ReturnType = operation.SyncMethod.ReturnType;
+            this.Parameters = operationInfo.GetParameters();
+            this.ReturnType = operationInfo.ReturnType;
         }
 
         /// <summary>

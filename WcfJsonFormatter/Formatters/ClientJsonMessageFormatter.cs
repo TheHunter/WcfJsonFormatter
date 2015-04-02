@@ -18,17 +18,22 @@ namespace WcfJsonFormatter.Formatters
     {
         private readonly Uri operationUri;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="operation"></param>
-        /// <param name="endpoint"></param>
-        /// <param name="serviceRegister"></param>
+        
+        //protected ClientJsonMessageFormatter(OperationDescription operation, ServiceEndpoint endpoint, IServiceRegister serviceRegister)
+        //    : base (operation.Messages[0].Action,
+        //            operation.SyncMethod.GetParameters(),
+        //            operation.SyncMethod.ReturnType,
+        //            serviceRegister)
+        //{
+        //    string endpointAddress = endpoint.Address.Uri.ToString();
+        //    if (!endpointAddress.EndsWith("/"))
+        //        endpointAddress = endpointAddress + "/";
+
+        //    this.operationUri = new Uri(endpointAddress + operation.Name);
+        //}
+
         protected ClientJsonMessageFormatter(OperationDescription operation, ServiceEndpoint endpoint, IServiceRegister serviceRegister)
-            : base (operation.Messages[0].Action,
-                    operation.SyncMethod.GetParameters(),
-                    operation.SyncMethod.ReturnType,
-                    serviceRegister)
+            : base(new ServiceOperation(operation, operation.Messages[0].Action), serviceRegister)
         {
             string endpointAddress = endpoint.Address.Uri.ToString();
             if (!endpointAddress.EndsWith("/"))
