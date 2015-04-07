@@ -32,6 +32,12 @@ namespace WcfJsonFormatter.Formatters
         //    this.operationUri = new Uri(endpointAddress + operation.Name);
         //}
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClientJsonMessageFormatter"/> class.
+        /// </summary>
+        /// <param name="operation">The operation.</param>
+        /// <param name="endpoint">The endpoint.</param>
+        /// <param name="serviceRegister">The service register.</param>
         protected ClientJsonMessageFormatter(OperationDescription operation, ServiceEndpoint endpoint, IServiceRegister serviceRegister)
             : base(new ServiceOperation(operation, operation.Messages[0].Action), serviceRegister)
         {

@@ -106,7 +106,7 @@ namespace WcfJsonFormatter.Configuration
             return ((TElement)element).Key;
         }
 
-        /// <summary>
+        /// <summary> 
         /// Gets or sets the <see cref="TElement"/> at the specified index.
         /// </summary>
         /// <param name="index">The index.</param>

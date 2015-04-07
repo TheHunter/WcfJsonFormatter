@@ -22,10 +22,11 @@ namespace WcfJsonFormatter.Formatters
         /// <param name="operation"></param>
         /// <param name="serviceRegister"></param>
         protected DispatchJsonMessageFormatter(OperationDescription operation, IServiceRegister serviceRegister)
-            : base (operation.Messages[1].Action,
-                    operation.SyncMethod.GetParameters(),
-                    operation.SyncMethod.ReturnType,
-                    serviceRegister)
+            //: base (operation.Messages[1].Action,
+            //        operation.SyncMethod.GetParameters(),
+            //        operation.SyncMethod.ReturnType,
+            //        serviceRegister)
+            : base (new ServiceOperation(operation, operation.Messages[1].Action), serviceRegister)
         {
         }
 
